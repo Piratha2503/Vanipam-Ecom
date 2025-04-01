@@ -1,4 +1,4 @@
-package com.service.Products.Utils.Enums;
+package com.service.Admin.Utils.Enums;
 
 import lombok.Getter;
 
