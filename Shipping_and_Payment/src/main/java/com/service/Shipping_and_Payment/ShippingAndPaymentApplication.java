@@ -8,6 +8,7 @@ public class ShippingAndPaymentApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ShippingAndPaymentApplication.class, args);
+		System.out.println("ShippingAndPayment service started ...");
 	}
 
 }

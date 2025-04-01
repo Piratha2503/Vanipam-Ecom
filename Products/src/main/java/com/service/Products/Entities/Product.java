@@ -2,25 +2,40 @@ package com.service.Products.Entities;
 
 import com.service.Products.Utils.DateTimeUtils;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "products")
 public class Product extends DateTimeUtils {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String productName;
+
     private String productType;
+
     private String productDescription;
+
     private String brand;
-    private String quantityType;
+
+    @Column(name = "unit_of_measure")
+    private String unitOfMeasure;
+
     private Long quantity;
-    private String price;
-    @ManyToOne
-    @JoinColumn(name = "sub_categoryId")
+
+    @Column(name = "price_per_unit", nullable = false)
+    private BigDecimal pricePerUnit;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "sub_category_id")
     private SubCategory subCategory;
+
+    @Column(name = "expiry_date")
+    private LocalDateTime expiryDate;
+
 }

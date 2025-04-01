@@ -8,6 +8,7 @@ public class NotificationReviewRatingApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(NotificationReviewRatingApplication.class, args);
+		System.out.println("NotificationReviewRating Service Started ... ");
 	}
 
 }
