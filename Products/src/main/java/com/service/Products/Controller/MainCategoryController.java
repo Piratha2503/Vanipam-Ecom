@@ -50,7 +50,7 @@ public class MainCategoryController {
 
     @GetMapping(APIEndPoints.getMainCategoryByID)
     public ResponseEntity<Object> getMainCategoryByID(@PathVariable Long id){
-        if (mainCategoryService.existMainCategoryById(id)) return ResponseEntity.ok().body("Id Not Exist");
+        if (!mainCategoryService.existMainCategoryById(id)) return ResponseEntity.ok().body("Id Not Exist");
         return ResponseEntity.ok().body(mainCategoryService.getMainCategoryById(id));
     }
 

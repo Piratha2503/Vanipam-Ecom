@@ -1,4 +1,4 @@
-package com.service.Products.Utils.Enums;
+package com.service.Products.Enums;
 
 import lombok.Getter;
 import java.util.Arrays;
