@@ -1,16 +1,17 @@
 package com.service.Products.Controller;
 
-import com.service.Products.APIResponse.APIContentResponse;
-import com.service.Products.Enums.ResponseStatus;
+import com.service.Products.DTO.RequestDTO.ProductRequest;
+import com.service.Products.DTO.ResponseDTO.ProductResponse;
 import com.service.Products.Service.ProductService;
 import com.service.Products.Utils.APIEndPoints;
 import com.service.Products.Utils.ValidationCodesAndMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin
@@ -24,13 +25,15 @@ public class ProductController {
     @GetMapping(APIEndPoints.getProductList)
     public ResponseEntity<Object> getProductList(){
 
-        return ResponseEntity.ok().body(new APIContentResponse<>(
-                ResponseStatus.SUCCESS.getStatus(),
-                validationCodesAndMessages.getCommonSuccessCode(),
-                validationCodesAndMessages.getGetSuccessMessage(),
-                "productList",
-                productService.getProductList()
+        Map<String, List<ProductResponse>> stringListMap = new HashMap<>();
+        stringListMap.put("getProductList",productService.getProductList());
 
-        ));
+        return ResponseEntity.ok().body(Map.of("data",stringListMap));
+    }
+
+    @PostMapping(APIEndPoints.saveProduct)
+    public ResponseEntity<Object> saveProduct(@RequestBody ProductRequest productRequest){
+        productService.saveProduct(productRequest);
+        return ResponseEntity.ok().body("Product details saved");
     }
 }

@@ -1,0 +1,32 @@
+scalar Long
+scalar BigDecimal
+scalar DateTime
+
+type MainCategoryResponse {
+    id: Long
+    mainCategoryName: String
+}
+
+type SubCategoryResponse {
+    id: Long
+    subCategoryName: String
+    mainCategoryResponse: MainCategoryResponse
+},
+
+type ProductResponse {
+    id: Long
+    productName: String
+    productType: String
+    productDescription: String
+    brand: String
+    unitOfMeasure: String
+    quantity: Long
+    pricePerUnit: BigDecimal
+    expiryDate: DateTime
+    subCategoryResponse: SubCategoryResponse
+}
+
+type Query {
+    getProductList: [ProductResponse]
+    getProductById(id:Long):ProductResponse
+}

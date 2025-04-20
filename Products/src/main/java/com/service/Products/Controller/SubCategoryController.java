@@ -1,6 +1,5 @@
 package com.service.Products.Controller;
 
-import com.service.Products.DTO.RequestDTO.MainCategoryRequest;
 import com.service.Products.DTO.RequestDTO.SubcategoryRequest;
 import com.service.Products.DTO.ResponseDTO.MainCategoryResponse;
 import com.service.Products.Service.MainCategoryService;
@@ -14,6 +13,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
+@RequestMapping(APIEndPoints.baseAPI)
 public class SubCategoryController {
 
     @Autowired
@@ -39,13 +39,13 @@ public class SubCategoryController {
         if (!mainCategoryService.existMainCategoryById(subcategoryRequest.getMainCategory_id())) return ResponseEntity.ok().body("MainCategory Id does not Exist");
         if (subCategoryService.existSubCategoryByName(subcategoryRequest.getSub_categoryName())) return ResponseEntity.ok().body("Exist By name");
         subCategoryService.saveSubCategory(subcategoryRequest);
-        return ResponseEntity.ok().body("Saved");
+        return ResponseEntity.ok().body(subcategoryRequest);
     }
 
     @PutMapping(APIEndPoints.updateSubCategory)
     public ResponseEntity<Object> updateSubCategory(@RequestBody SubcategoryRequest subcategoryRequest){
         if (!mainCategoryService.existMainCategoryById(subcategoryRequest.getMainCategory_id())) return ResponseEntity.ok().body("MainCategory Id does not Exist");
-        if (subCategoryService.existSubCategoryById(subcategoryRequest.getMainCategory_id())) return ResponseEntity.ok().body("MainCategory Id does not Exist");
+        if (subCategoryService.existSubCategoryById(subcategoryRequest.getId())) return ResponseEntity.ok().body("MainCategory Id does not Exist");
         if (subCategoryService.existSubCategoryByNameAndIdNot(subcategoryRequest.getSub_categoryName(),subcategoryRequest.getId()))
             return ResponseEntity.ok().body("Exist By name");
         subCategoryService.updateSubCategory(subcategoryRequest);

@@ -11,7 +11,7 @@ public class SubCategory extends DateTimeUtils {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String sub_categoryName;
+    private String subCategoryName;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "main_category_id",nullable = false)
     private MainCategory mainCategory;

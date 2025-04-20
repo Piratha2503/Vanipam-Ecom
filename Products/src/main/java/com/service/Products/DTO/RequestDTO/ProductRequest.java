@@ -1,10 +1,5 @@
 package com.service.Products.DTO.RequestDTO;
 
-import com.service.Products.Entities.SubCategory;
-import jakarta.persistence.Column;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
 import java.math.BigDecimal;

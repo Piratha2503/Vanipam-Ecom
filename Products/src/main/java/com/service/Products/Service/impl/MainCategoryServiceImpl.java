@@ -56,7 +56,7 @@ public class MainCategoryServiceImpl implements MainCategoryService {
 
     @Override
     public boolean existMainCategoryById(Long id) {
-        return !mainCategoryRepository.existsById(id);
+        return mainCategoryRepository.existsById(id);
     }
 
     @Override

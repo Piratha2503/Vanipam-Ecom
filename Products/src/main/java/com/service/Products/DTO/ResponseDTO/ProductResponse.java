@@ -1,6 +1,5 @@
 package com.service.Products.DTO.ResponseDTO;
 
-import com.service.Products.Entities.SubCategory;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -16,6 +15,6 @@ public class ProductResponse {
     private String unitOfMeasure;
     private Long quantity;
     private BigDecimal pricePerUnit;
-    private SubcategoryResponse subcategoryResponse;
+    private SubcategoryResponse subCategoryResponse;
     private LocalDateTime expiryDate;
 }
