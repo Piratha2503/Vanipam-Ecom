@@ -1,18 +1,18 @@
 package com.service.Products.APIResponse;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-
+@NoArgsConstructor
 public class ApiBaseResponses {
-    private String validation_status;
-    private String validation_Code;
-    private String validation_message;
+    private String validationStatus;
+    private String validationCode;
+    private String validationMessage;
 
-    public ApiBaseResponses(String validation_Code, String validation_status, String validation_message){
-        this.validation_Code = validation_Code;
-        this.validation_status = validation_status;
-        this.validation_message = validation_message;
+    public ApiBaseResponses(String validationCode, String validationStatus, String validationMessage){
+        this.validationCode = validationCode;
+        this.validationStatus = validationStatus;
+        this.validationMessage = validationMessage;
     }
 }

@@ -14,9 +14,9 @@ public class APIContentResponse <T> extends ApiBaseResponses{
 
     private Map<String,T> contents = new HashMap<>();
 
-    public APIContentResponse(String validation_status, String validation_Code, String validation_message,
+    public APIContentResponse(String validationCode, String validationStatus, String validationMessage,
     String title,T content) {
-        super(validation_status, validation_Code, validation_message);
+        super(validationStatus, validationCode, validationMessage);
         contents.put(title,content);
     }
 }

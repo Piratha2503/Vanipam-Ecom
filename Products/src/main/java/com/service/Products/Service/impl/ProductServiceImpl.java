@@ -37,11 +37,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void saveProduct(ProductRequest productRequest) {
-        Product product = new Product();
-        BeanUtils.copyProperties(productRequest,product);
-        SubCategory subCategory = subCategoryRepository.getReferenceById(productRequest.getSubCategory_id());
-        product.setSubCategory(subCategory);
-        productRepository.save(product);
+            Product product = new Product();
+            BeanUtils.copyProperties(productRequest, product);
+            SubCategory subCategory = subCategoryRepository.getReferenceById(productRequest.getSubCategory_id());
+            product.setSubCategory(subCategory);
+            productRepository.save(product);
+
     }
 
     public ProductResponse copyValuesToResponse(Product product){

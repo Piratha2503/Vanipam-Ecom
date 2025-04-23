@@ -30,3 +30,33 @@ type Query {
     getProductList: [ProductResponse]
     getProductById(id:Long):ProductResponse
 }
+
+input ProductRequest {
+    productName: String
+    productType: String
+    productDescription: String
+    brand: String
+    unitOfMeasure: String
+    quantity: Long
+    pricePerUnit: BigDecimal
+    expiryDate: DateTime
+    subCategory_id: Long
+}
+
+
+type Mutation {
+    saveProduct(productRequest: ProductRequest): ApiBaseResponses
+}
+
+type ApiBaseResponses {
+    validationStatus: String!
+    validationCode: String!
+    validationMessage: String!
+}
+
+type ProductContentResponse {
+    validationStatus: String!
+    validationCode: String!
+    validationMessage: String!
+}
+

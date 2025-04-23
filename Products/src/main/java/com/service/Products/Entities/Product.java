@@ -21,7 +21,9 @@ public class Product extends DateTimeUtils {
 
     private String productDescription;
 
-    private String brand;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "brand_id")
+    private Brand brand;
 
     @Column(name = "unit_of_measure")
     private String unitOfMeasure;
