@@ -24,8 +24,7 @@ public class SubCategoryController {
 
     @GetMapping(APIEndPoints.getSubCategoryList)
     public ResponseEntity<Object> getSubCategoryList(){
-        List<MainCategoryResponse> mainCategoryList = subCategoryService.getSubCategoryList();
-        return ResponseEntity.ok().body(mainCategoryList);
+        return ResponseEntity.ok().body(subCategoryService.getSubCategoryList());
     }
 
     @GetMapping(APIEndPoints.getSubCategoryByID)

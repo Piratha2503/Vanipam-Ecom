@@ -29,7 +29,8 @@ public class ProductResolver {
 
     @QueryMapping
     public ApiBaseResponses saveProduct(@Argument ProductRequest productRequest){
-        productService.saveProduct(productRequest);
+
+        System.out.println(productRequest);
         return new ApiBaseResponses(
                 "40000",
                 "Success",

@@ -3,11 +3,13 @@ package com.service.Products.Service;
 import com.service.Products.DTO.RequestDTO.MainCategoryRequest;
 import com.service.Products.DTO.RequestDTO.SubcategoryRequest;
 import com.service.Products.DTO.ResponseDTO.MainCategoryResponse;
+import com.service.Products.DTO.ResponseDTO.SubcategoryResponse;
+import com.service.Products.Entities.SubCategory;
 
 import java.util.List;
 
 public interface SubCategoryService {
-    List<MainCategoryResponse> getSubCategoryList();
+    List<SubCategory> getSubCategoryList();
 
     boolean existSubCategoryByName(String subCategoryName);
 

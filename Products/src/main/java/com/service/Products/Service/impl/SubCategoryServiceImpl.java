@@ -3,6 +3,7 @@ package com.service.Products.Service.impl;
 import com.service.Products.DTO.RequestDTO.MainCategoryRequest;
 import com.service.Products.DTO.RequestDTO.SubcategoryRequest;
 import com.service.Products.DTO.ResponseDTO.MainCategoryResponse;
+import com.service.Products.DTO.ResponseDTO.SubcategoryResponse;
 import com.service.Products.Entities.MainCategory;
 import com.service.Products.Entities.SubCategory;
 import com.service.Products.Repositories.MainCategoryRepository;
@@ -25,8 +26,8 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     private MainCategoryRepository mainCategoryRepository;
 
     @Override
-    public List<MainCategoryResponse> getSubCategoryList() {
-        return List.of();
+    public List<SubCategory> getSubCategoryList() {
+        return subCategoryRepository.findAll();
     }
 
     @Override
