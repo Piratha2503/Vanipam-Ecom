@@ -19,49 +19,27 @@ public class MainCategoryController {
     @Autowired
     private MainCategoryService mainCategoryService;
 
-    @GetMapping("/test")
-    public String getIp(HttpServletRequest request){
-        String ip = request.getHeader("X-Forwarded-For");
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("Proxy-Client-IP");
-        }
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("WL-Proxy-Client-IP");
-        }
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("HTTP_CLIENT_IP");
-        }
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getHeader("HTTP_X_FORWARDED_FOR");
-        }
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
-            ip = request.getRemoteAddr(); // Fallback to request IP
-        }
-
-        return "Client IP: " + ip;
-    }
-
-    @GetMapping(APIEndPoints.getMainCategoryList)
+    @GetMapping(APIEndPoints.mainCategories)
     public ResponseEntity<Object> getMainCategoryList(){
 
         List<MainCategoryResponse> mainCategoryList = mainCategoryService.getMainCategoryList();
         return ResponseEntity.ok().body(mainCategoryList);
     }
 
-    @GetMapping(APIEndPoints.getMainCategoryByID)
+    @GetMapping(APIEndPoints.mainCategoryById)
     public ResponseEntity<Object> getMainCategoryByID(@PathVariable Long id){
         if (!mainCategoryService.existMainCategoryById(id)) return ResponseEntity.ok().body("Id Not Exist");
         return ResponseEntity.ok().body(mainCategoryService.getMainCategoryById(id));
     }
 
-    @PostMapping(APIEndPoints.saveMainCategory)
+    @PostMapping(APIEndPoints.mainCategory)
     public ResponseEntity<Object> saveMainCategory(@RequestBody MainCategoryRequest mainCategoryRequest){
         if (mainCategoryService.existMainCategoryByName(mainCategoryRequest.getMainCategoryName())) return ResponseEntity.ok().body("Exist By name");
         mainCategoryService.saveMainCategory(mainCategoryRequest);
         return ResponseEntity.ok().body("Saved");
     }
 
-    @PutMapping(APIEndPoints.updateMainCategory)
+    @PutMapping(APIEndPoints.mainCategoryById)
     public ResponseEntity<Object> updateMainCategory(@RequestBody MainCategoryRequest mainCategoryRequest){
         if (mainCategoryService.existMainCategoryById(mainCategoryRequest.getId())) return ResponseEntity.ok().body("Id Not Exist");
         if (mainCategoryService.existMainCategoryByNameAndIdNot(mainCategoryRequest.getMainCategoryName(),mainCategoryRequest.getId()))
@@ -70,7 +48,7 @@ public class MainCategoryController {
         return ResponseEntity.ok().body("Updated");
     }
 
-    @DeleteMapping(APIEndPoints.deleteMainCategory)
+    @DeleteMapping(APIEndPoints.mainCategoryById)
     public ResponseEntity<Object> deleteMainCategory(@PathVariable Long id){
         if (mainCategoryService.existMainCategoryById(id)) return ResponseEntity.ok().body("Id Not Exist");
         mainCategoryService.deleteMainCategory(id);

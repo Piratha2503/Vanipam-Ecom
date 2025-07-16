@@ -5,8 +5,8 @@ import lombok.Data;
 
 @Data
 @Builder
-public class SubcategoryResponse {
+public class BrandResponse {
     private Long id;
-    private String subCategoryName;
-    private MainCategoryResponse mainCategoryResponse;
+    private String brandName;
+    private String taxPercentage;
 }

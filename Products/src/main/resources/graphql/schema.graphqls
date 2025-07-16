@@ -2,6 +2,14 @@ scalar Long
 scalar BigDecimal
 scalar DateTime
 
+
+type Query {
+    getProductList: [ProductResponse]
+    getProductById(id:Long):ProductResponse
+    getSubcategoryById(id:Long):SubCategoryResponse
+    getSubcategoryList:[SubCategoryResponse]
+}
+
 type MainCategoryResponse {
     id: Long
     mainCategoryName: String
@@ -24,11 +32,6 @@ type ProductResponse {
     pricePerUnit: BigDecimal
     expiryDate: DateTime
     subCategoryResponse: SubCategoryResponse
-}
-
-type Query {
-    getProductList: [ProductResponse]
-    getProductById(id:Long):ProductResponse
 }
 
 input ProductRequest {

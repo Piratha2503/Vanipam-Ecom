@@ -22,7 +22,7 @@ public class ProductController {
     @Autowired
     private ValidationCodesAndMessages validationCodesAndMessages;
 
-    @GetMapping(APIEndPoints.getProductList)
+    @GetMapping(APIEndPoints.products)
     public ResponseEntity<Object> getProductList(){
 
         Map<String, List<ProductResponse>> stringListMap = new HashMap<>();
@@ -31,9 +31,9 @@ public class ProductController {
         return ResponseEntity.ok().body(Map.of("data",stringListMap));
     }
 
-    @PostMapping(APIEndPoints.saveProduct)
+    @PostMapping(APIEndPoints.product)
     public ResponseEntity<Object> saveProduct(@RequestBody ProductRequest productRequest){
         productService.saveProduct(productRequest);
-        return ResponseEntity.ok().body("Product details saved");
+        return ResponseEntity.ok().body(productRequest);
     }
 }

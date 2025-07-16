@@ -22,13 +22,16 @@ public class MainCategoryServiceImpl implements MainCategoryService {
 
     @Override
     public List<MainCategoryResponse> getMainCategoryList() {
-        return mainCategoryRepository.findAll().stream().map(this::copyValuesToResponse).toList();
+        return mainCategoryRepository.findAll().stream().map(mainCategory ->
+                MainCategoryResponse.builder().mainCategoryName(mainCategory.getMainCategoryName()).id(mainCategory.getId()).build()).toList();
     }
 
     @Override
     public MainCategoryResponse getMainCategoryById(Long id) {
-        return copyValuesToResponse(mainCategoryRepository.findById(id).orElseThrow(
-                () -> new NoSuchElementException("MainCategory not found with id: " + id)));
+        MainCategory mainCategory = mainCategoryRepository.findById(id).orElseThrow(
+                () -> new NoSuchElementException("MainCategory not found with id: " + id));
+        return MainCategoryResponse.builder().mainCategoryName(mainCategory.getMainCategoryName())
+                .id(mainCategory.getId()).build();
     }
 
     @Override
@@ -64,11 +67,6 @@ public class MainCategoryServiceImpl implements MainCategoryService {
         mainCategoryRepository.deleteById(id);
     }
 
-    private MainCategoryResponse copyValuesToResponse(MainCategory mainCategory){
-        MainCategoryResponse mainCategoryResponse = new MainCategoryResponse();
-        BeanUtils.copyProperties(mainCategoryResponse,mainCategory);
-        return mainCategoryResponse;
-    }
 
     private MainCategory copyValuesFromRequest(MainCategoryRequest mainCategoryRequest, MainCategory mainCategory){
         BeanUtils.copyProperties(mainCategoryRequest,mainCategory);

@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class SubcategoryRequest {
     private Long id;
-    private String sub_categoryName;
+    private String subCategoryName;
     private Long mainCategory_id;
 }

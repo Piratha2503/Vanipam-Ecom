@@ -4,27 +4,22 @@ import lombok.Data;
 
 @Data
 public final class APIEndPoints {
-    public static final String baseAPI = "/api/products/";
+    public static final String baseAPI = "/api/v1/";
     public static final String id = "/{id}";
 
     // Main Category
-    public static final String saveMainCategory = "saveMainCategory";
-    public static final String getMainCategoryList = "getMainCategoryList";
-    public static final String updateMainCategory = "updateMainCategory";
-    public static final String deleteMainCategory = "deleteMainCategory";
-    public static final String getMainCategoryByID = "getMainCategoryByID"+id;
+    public static final String mainCategory = "mainCategory";
+    public static final String mainCategories = "mainCategories";
+    public static final String mainCategoryById = mainCategory+id;
 
     // Main Category
-    public static final String saveSubCategory = "saveSubCategory";
-    public static final String getSubCategoryList = "getSubCategoryList";
-    public static final String updateSubCategory = "updateSubCategory";
-    public static final String deleteSubCategory = "deleteSubCategory";
-    public static final String getSubCategoryByID = "getSubCategoryByID"+id;
+    public static final String subCategory = "subCategory";
+    public static final String subCategories = "subCategories";
+    public static final String subCategoryByID = subCategory+id;
 
     // Products
-    public static final String saveProduct   = "saveProduct";
-    public static final String getProductList= "getProductList";
-    public static final String updateProduct= "updateProduct";
-    public static final String deleteProduct= "deleteProduct";
-    public static final String getProductById = "getProduct"+id;
+    public static final String product   = "product";
+    public static final String products = "products";
+    public static final String productById = product+id;
+
 }

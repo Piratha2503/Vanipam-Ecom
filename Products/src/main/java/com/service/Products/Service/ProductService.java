@@ -12,6 +12,4 @@ public interface ProductService {
     void saveProduct(ProductRequest productRequest);
 
     ProductResponse getProductById(Long id);
-
-
 }

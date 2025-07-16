@@ -9,7 +9,7 @@ import com.service.Products.Entities.SubCategory;
 import java.util.List;
 
 public interface SubCategoryService {
-    List<SubCategory> getSubCategoryList();
+    List<SubcategoryResponse> getSubCategoryList();
 
     boolean existSubCategoryByName(String subCategoryName);
 
@@ -23,5 +23,5 @@ public interface SubCategoryService {
 
     void deleteSubCategory(Long id);
 
-    MainCategoryResponse getSubCategoryById(Long id);
+    SubcategoryResponse getSubCategoryById(Long id);
 }

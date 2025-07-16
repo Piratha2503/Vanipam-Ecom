@@ -24,6 +24,7 @@ public class ProductResolver {
 
     @QueryMapping
     public ProductResponse getProductById(@Argument Long id){
+        System.out.println(id);
         return productService.getProductById(id);
     }
 

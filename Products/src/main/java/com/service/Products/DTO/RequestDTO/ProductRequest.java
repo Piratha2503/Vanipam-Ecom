@@ -12,7 +12,7 @@ public class ProductRequest {
     private String productName;
     private String productType;
     private String productDescription;
-    private String brand;
+    private Long brandId;
     private String unitOfMeasure;
     private Long quantity;
     private BigDecimal pricePerUnit;

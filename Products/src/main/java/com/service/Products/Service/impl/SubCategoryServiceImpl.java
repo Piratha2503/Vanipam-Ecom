@@ -1,12 +1,10 @@
 package com.service.Products.Service.impl;
 
-import com.service.Products.DTO.RequestDTO.MainCategoryRequest;
 import com.service.Products.DTO.RequestDTO.SubcategoryRequest;
 import com.service.Products.DTO.ResponseDTO.MainCategoryResponse;
 import com.service.Products.DTO.ResponseDTO.SubcategoryResponse;
 import com.service.Products.Entities.MainCategory;
 import com.service.Products.Entities.SubCategory;
-import com.service.Products.Repositories.MainCategoryRepository;
 import com.service.Products.Repositories.SubCategoryRepository;
 import com.service.Products.Service.MainCategoryService;
 import com.service.Products.Service.SubCategoryService;
@@ -22,12 +20,10 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     private SubCategoryRepository subCategoryRepository;
     @Autowired
     private MainCategoryService mainCategoryService;
-    @Autowired
-    private MainCategoryRepository mainCategoryRepository;
 
     @Override
-    public List<SubCategory> getSubCategoryList() {
-        return subCategoryRepository.findAll();
+    public List<SubcategoryResponse> getSubCategoryList() {
+        return subCategoryRepository.findAll().stream().map(this::copyToSubcategoryResponse).toList();
     }
 
     @Override
@@ -38,7 +34,9 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     @Override
     public void saveSubCategory(SubcategoryRequest subcategoryRequest) {
         SubCategory subCategory = new SubCategory();
-        MainCategory mainCategory = mainCategoryRepository.getReferenceById(subcategoryRequest.getMainCategory_id());
+        MainCategoryResponse mainCategoryResponse = mainCategoryService.getMainCategoryById(subcategoryRequest.getMainCategory_id());
+        MainCategory mainCategory = new MainCategory();
+        BeanUtils.copyProperties(mainCategoryResponse,mainCategory);
         subCategory.setMainCategory(mainCategory);
         BeanUtils.copyProperties(subcategoryRequest,subCategory);
         subCategoryRepository.save(subCategory);
@@ -51,12 +49,19 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
     @Override
     public void updateSubCategory(SubcategoryRequest subcategoryRequest) {
-
+        SubCategory subCategory = subCategoryRepository.getReferenceById(subcategoryRequest.getId());
+        BeanUtils.copyProperties(subcategoryRequest,subCategory);
+        MainCategoryResponse mainCategoryResponse = mainCategoryService.getMainCategoryById(subcategoryRequest.getMainCategory_id());
+        MainCategory mainCategory = new MainCategory();
+        BeanUtils.copyProperties(mainCategoryResponse,mainCategory);
+        subCategory.setMainCategory(mainCategory);
+        BeanUtils.copyProperties(subcategoryRequest,subCategory);
+        subCategoryRepository.save(subCategory);
     }
 
     @Override
     public boolean existSubCategoryById(Long id) {
-        return false;
+        return subCategoryRepository.existsById(id);
     }
 
     @Override
@@ -65,7 +70,18 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     }
 
     @Override
-    public MainCategoryResponse getSubCategoryById(Long id) {
-        return null;
+    public SubcategoryResponse getSubCategoryById(Long id) {
+        return copyToSubcategoryResponse(subCategoryRepository.getReferenceById(id));
+    }
+
+    public SubcategoryResponse copyToSubcategoryResponse(SubCategory subCategory){
+        return SubcategoryResponse.builder()
+                .id(subCategory.getId())
+                .subCategoryName(subCategory.getSubCategoryName())
+                .mainCategoryResponse(MainCategoryResponse.builder()
+                        .id(subCategory.getMainCategory().getId())
+                        .mainCategoryName(subCategory.getMainCategory().getMainCategoryName())
+                        .build())
+                .build();
     }
 }
