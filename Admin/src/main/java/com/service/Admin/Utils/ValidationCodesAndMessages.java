@@ -6,7 +6,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 @Component
-@PropertySource("classpath:ValidationCodes&Messages.properties")
+@PropertySource("classpath:validation.properties")
 @Data
 public class ValidationCodesAndMessages {
 
