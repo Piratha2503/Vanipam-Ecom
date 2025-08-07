@@ -2,9 +2,11 @@ package com.service.Products.Entities;
 
 import com.service.Products.Utils.DateTimeUtils;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -38,6 +40,6 @@ public class Product extends DateTimeUtils {
     private SubCategory subCategory;
 
     @Column(name = "expiry_date")
-    private LocalDateTime expiryDate;
+    private LocalDate expiryDate;
 
 }

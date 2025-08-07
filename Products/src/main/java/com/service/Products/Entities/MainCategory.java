@@ -4,6 +4,8 @@ import com.service.Products.Utils.DateTimeUtils;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -14,5 +16,9 @@ public class MainCategory extends DateTimeUtils {
 
     @Column(name = "mainCategory_name", nullable = false)
     private String mainCategoryName;
+
+    @OneToMany(mappedBy = "main_category")
+    private List<SubCategory> subCategories;
+
 
 }
