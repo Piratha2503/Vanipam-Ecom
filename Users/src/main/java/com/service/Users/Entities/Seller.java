@@ -1,14 +1,15 @@
 package com.service.Users.Entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.service.Users.Utils.DateTimeUtils;
+import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Entity
-public class Seller {
+public class Seller extends DateTimeUtils {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,6 +18,8 @@ public class Seller {
     private String email;
     private String mobile;
     private String businessName;
+    @Embedded
+    private Address address;
     private String userName;
     private String password;
 }

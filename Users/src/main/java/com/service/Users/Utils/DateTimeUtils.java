@@ -1,20 +1,20 @@
-package com.service.Users.Utils;
+    package com.service.Users.Utils;
 
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.MappedSuperclass;
-import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+    import jakarta.persistence.EntityListeners;
+    import jakarta.persistence.MappedSuperclass;
+    import lombok.Data;
+    import org.hibernate.annotations.CreationTimestamp;
+    import org.hibernate.annotations.UpdateTimestamp;
+    import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.sql.Timestamp;
+    import java.sql.Timestamp;
 
-@Data
-@MappedSuperclass
-@EntityListeners(AuditingEntityListener.class)
-public class DateTimeUtils {
-    @CreationTimestamp
-    private Timestamp created_timestamp;
-    @UpdateTimestamp
-    private Timestamp updated_timestamp;
-}
+    @Data
+    @MappedSuperclass
+    @EntityListeners(AuditingEntityListener.class)
+    public class DateTimeUtils {
+        @CreationTimestamp
+        private Timestamp created_timestamp;
+        @UpdateTimestamp
+        private Timestamp updated_timestamp;
+    }
