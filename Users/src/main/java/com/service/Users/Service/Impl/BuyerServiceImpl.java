@@ -60,13 +60,13 @@ public class BuyerServiceImpl implements BuyerService {
     }
 
     private void updateEntity(Buyer buyer, BuyerRequest request) {
-        buyer.setFirstName(request.getFirstName());
-        buyer.setLastName(request.getLastName());
-        buyer.setEmail(request.getEmail());
-        buyer.setMobile(request.getMobile());
-        buyer.setAddress(request.getAddress());
-        buyer.setUserName(request.getUserName());
-        buyer.setPassword(request.getPassword());
+        buyer.setFirstName(request.firstName());
+        buyer.setLastName(request.lastName());
+        buyer.setEmail(request.email());
+        buyer.setMobile(request.mobile());
+        buyer.setAddress(request.address());
+        buyer.setUserName(request.userName());
+        buyer.setPassword(request.password());
     }
 
     private BuyerResponse mapToResponse(Buyer buyer) {

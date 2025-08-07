@@ -4,26 +4,16 @@ import com.service.Users.Entities.Address;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import lombok.Data;
+import lombok.Builder;
 
-@Data
-public class BuyerRequest {
-    @NotBlank
-    private String firstName;
-    @NotBlank
-    private String lastName;
+@Builder
+public record BuyerRequest(
+        @NotBlank String firstName,
+        @NotBlank String lastName,
+        @Email(message = "Invalid email format") String email,
+        @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Invalid mobile number") String mobile,
+        @NotBlank Address address,
+        @NotBlank String userName,
+        @NotBlank String password) {
 
-    @Email(message = "Invalid email format")
-    private String email;
-
-    @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Invalid mobile number")
-    private String mobile;
-
-    @NotBlank
-    private Address address;
-
-    @NotBlank
-    private String userName;
-    @NotBlank
-    private String password;
 }

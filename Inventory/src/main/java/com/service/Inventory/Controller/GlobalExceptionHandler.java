@@ -1,21 +1,18 @@
-package com.service.Products.Controller;
+package com.service.Inventory.Controller;
 
-import com.service.Products.APIResponse.ApiBaseResponses;
+import com.service.Inventory.APIResponse.ApiBaseResponses;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestController;
-
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@RestController
 @ControllerAdvice
-@CrossOrigin
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -31,31 +28,41 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<Object> handleNullPointerException(NullPointerException ne){
-
+        ne.printStackTrace();
         return ResponseEntity.ok(new ApiBaseResponses(
-                "Validation Failed",
-                "40000",
+                HttpStatus.NO_CONTENT.getReasonPhrase(),
+                String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.hashCode()),
                 ne.getMessage()
+        ));
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<Object> handleEntityNotFoundException(EntityNotFoundException enf){
+        enf.printStackTrace();
+        return ResponseEntity.ok(new ApiBaseResponses(
+                HttpStatus.NO_CONTENT.getReasonPhrase(),
+                String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.hashCode()),
+                enf.getMessage()
         ));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException ie){
-
+        ie.printStackTrace();
         return ResponseEntity.ok(new ApiBaseResponses(
-                "Validation Failed",
+                "Illegal Argument Exception",
                 "40000",
-                ie.getMessage()
+                ie.getLocalizedMessage()
         ));
     }
 
-    @ExceptionHandler(ArithmeticException.class)
-    public ResponseEntity<Object> handleIllegalArithmeticException(ArithmeticException ae){
-
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<Object> handleIllegalIOException(IOException ioe){
+        ioe.printStackTrace();
         return ResponseEntity.ok(new ApiBaseResponses(
-                "Validation Failed",
+                "IllegalIO Exception",
                 "40000",
-                ae.getMessage()
+                ioe.getMessage()
         ));
     }
 }
