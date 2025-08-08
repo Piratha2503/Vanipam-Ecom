@@ -1,22 +1,29 @@
 package com.service.Users.Controller;
 
 import com.service.Users.APIResponse.ApiBaseResponses;
+import com.service.Users.Enums.ResponseStatus;
+import com.service.Users.Utils.ValidationCodesAndMessages;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 @ControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
+
+    private final ValidationCodesAndMessages validations;
+
+    private final String unknownStatus = ResponseStatus.UNKNOWN.getStatus();
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationErrors(MethodArgumentNotValidException ex) {
@@ -43,8 +50,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handleEntityNotFoundException(EntityNotFoundException enf){
         enf.printStackTrace();
         return ResponseEntity.ok(new ApiBaseResponses(
-                HttpStatus.NO_CONTENT.getReasonPhrase(),
-                String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.hashCode()),
+                validations.getCommonEntityNotFoundCode(),
+                unknownStatus,
                 enf.getMessage()
         ));
     }

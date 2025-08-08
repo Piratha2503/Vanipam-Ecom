@@ -2,13 +2,14 @@ package com.service.Users.Entities;
 
 import com.service.Users.Utils.DateTimeUtils;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Buyer extends DateTimeUtils {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

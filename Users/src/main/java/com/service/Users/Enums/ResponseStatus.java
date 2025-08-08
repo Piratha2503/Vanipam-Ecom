@@ -1,4 +1,4 @@
-package com.service.Users.Utils.Enums;
+package com.service.Users.Enums;
 
 import lombok.Getter;
 

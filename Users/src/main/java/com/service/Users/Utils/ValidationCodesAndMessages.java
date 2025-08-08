@@ -14,6 +14,8 @@ public class ValidationCodesAndMessages {
     private String commonSuccessCode;
     @Value("${code.failure.common}")
     private String commonFailureCode;
+    @Value("${code.null.entity.common}")
+    private String commonEntityNotFoundCode;
     @Value("${code.nullValues.received}")
     private String NullValuesCode;
     @Value("${code.failure.file}")
@@ -28,6 +30,8 @@ public class ValidationCodesAndMessages {
     private String getBuyerSuccessMessage;
     @Value("${message.success.delete.buyer}")
     private String deleteBuyerSuccessMessage;
+    @Value("${message.null.entity.buyer}")
+    private String buyerEntityNotFoundMessage;
 
     //Seller messages
     @Value("${message.success.save.seller}")
@@ -38,6 +42,8 @@ public class ValidationCodesAndMessages {
     private String getSellerSuccessMessage;
     @Value("${message.success.delete.seller}")
     private String deleteSellerSuccessMessage;
+    @Value("${message.null.entity.seller}")
+    private String sellerEntityNotFoundMessage;
 
 
 }

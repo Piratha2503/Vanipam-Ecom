@@ -2,24 +2,35 @@ package com.service.Users.Entities;
 
 import com.service.Users.Utils.DateTimeUtils;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+@Entity
+@Table(name = "seller")
 @Getter
 @Setter
-@Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Seller extends DateTimeUtils {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String firstName;
-    private String lastName;
+
+    private String firstname;
+    private String lastname;
+
+    @Column(unique = true, nullable = false)
     private String email;
+
     private String mobile;
     private String businessName;
+
     @Embedded
     private Address address;
-    private String userName;
+
+    @Column(unique = true, nullable = false)
+    private String username;
+
+    @Column(nullable = false)
     private String password;
 }
