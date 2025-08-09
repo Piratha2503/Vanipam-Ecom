@@ -20,6 +20,18 @@ public class ValidationCodesAndMessages {
     private String NullValuesCode;
     @Value("${code.failure.file}")
     private String fileFailureCode;
+    @Value("${code.already.exist}")
+    private String alreadyExistCode;
+
+
+
+    //common message
+    @Value("${message.already.exist.email}")
+    private String emailAlreadyExistMessage;
+    @Value("${message.already.exist.mobile}")
+    private String mobileAlreadyExistMessage;
+    @Value("${message.already.exist.username}")
+    private String usernameAlreadyExistMessage;
 
     //Buyer messages
     @Value("${message.success.save.buyer}")

@@ -6,7 +6,8 @@ import java.util.Arrays;
 
 @Getter
 public enum ResponseStatus {
-    SUCCESS("success"), FAILURE("failure"), UNKNOWN("unknown"), ERROR("error"), WARNING("warning");
+    SUCCESS("success"), FAILURE("failure"), UNKNOWN("unknown"), ERROR("error"), WARNING("warning"),
+    DUPLICATE("duplicate");
 
     private final String status;
 

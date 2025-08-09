@@ -5,8 +5,8 @@ import com.service.Users.DTO.RequestDTO.SellerSaveDTO;
 import com.service.Users.DTO.RequestDTO.SellerUpdateDTO;
 import com.service.Users.DTO.ResponseDTO.SellerResponse;
 import com.service.Users.Entities.Address;
-import com.service.Users.Entities.Buyer;
 import com.service.Users.Entities.Seller;
+import com.service.Users.ExceptionHandle.CustomExceptions.DuplicateValuesException;
 import com.service.Users.Repositories.SellerRepository;
 import com.service.Users.Service.SellerService;
 import com.service.Users.Utils.ValidationCodesAndMessages;
@@ -32,12 +32,15 @@ public class SellerServiceImpl implements SellerService {
 
     @Override
     public SellerResponse create(SellerSaveDTO dto) {
-        if (sellerRepository.existsByEmailIgnoreCase(dto.email())) {
-            throw new IllegalArgumentException("Email already in use");
-        }
-        if (sellerRepository.existsByUsernameIgnoreCase(dto.userName())) {
-            throw new IllegalArgumentException("Username already in use");
-        }
+        if (sellerRepository.existsByEmailIgnoreCase(dto.email()))
+            throw new DuplicateValuesException(validationMessages.getEmailAlreadyExistMessage());
+
+        if (sellerRepository.existsByMobileIgnoreCase(dto.mobile()))
+            throw new DuplicateValuesException(validationMessages.getMobileAlreadyExistMessage());
+
+        if (sellerRepository.existsByUsernameIgnoreCase(dto.userName()))
+            throw new DuplicateValuesException(validationMessages.getUsernameAlreadyExistMessage());
+
 
         return sellerToSellerResponse(sellerRepository.save(Seller.builder()
                 .firstname(dto.firstName())
@@ -55,6 +58,15 @@ public class SellerServiceImpl implements SellerService {
     public SellerResponse update(SellerUpdateDTO dto) {
         Seller existing = sellerRepository.findById(dto.id())
                 .orElseThrow(() -> new EntityNotFoundException(validationMessages.getSellerEntityNotFoundMessage()));
+
+        if (sellerRepository.existsByEmailIgnoreCaseAndIdNot(dto.email(), dto.id()))
+            throw new DuplicateValuesException(validationMessages.getEmailAlreadyExistMessage());
+
+        if (sellerRepository.existsByMobileIgnoreCaseAndIdNot(dto.mobile(), dto.id()))
+            throw new DuplicateValuesException(validationMessages.getMobileAlreadyExistMessage());
+
+        if (sellerRepository.existsByUsernameIgnoreCaseAndIdNot(dto.userName(),dto.id()))
+            throw new DuplicateValuesException(validationMessages.getUsernameAlreadyExistMessage());
 
         String firstname = dto.firstName() != null ? dto.firstName() : existing.getFirstname();
         String lastname = dto.lastName() != null ? dto.lastName() : existing.getLastname();

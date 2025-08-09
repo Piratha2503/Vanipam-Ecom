@@ -1,7 +1,8 @@
-package com.service.Users.Controller;
+package com.service.Users.ExceptionHandle;
 
 import com.service.Users.APIResponse.ApiBaseResponses;
 import com.service.Users.Enums.ResponseStatus;
+import com.service.Users.ExceptionHandle.CustomExceptions.DuplicateValuesException;
 import com.service.Users.Utils.ValidationCodesAndMessages;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -39,40 +40,47 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<Object> handleNullPointerException(NullPointerException ne){
         ne.printStackTrace();
-        return ResponseEntity.ok(new ApiBaseResponses(
-                HttpStatus.NO_CONTENT.getReasonPhrase(),
-                String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.hashCode()),
-                ne.getMessage()
-        ));
+        String code = validations.getCommonEntityNotFoundCode();
+        String status = ResponseStatus.ERROR.getStatus();
+        String msg = ne.getMessage();
+        return ResponseEntity.ok(new ApiBaseResponses(code,status,msg));
+    }
+
+    @ExceptionHandler(DuplicateValuesException.class)
+    public ResponseEntity<Object> handleDuplicateValuesException(DuplicateValuesException de){
+        de.printStackTrace();
+        String code = validations.getAlreadyExistCode();
+        String status = ResponseStatus.DUPLICATE.getStatus();
+        String msg = de.getMessage();
+        return ResponseEntity.ok(new ApiBaseResponses(code,status,msg));
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<Object> handleEntityNotFoundException(EntityNotFoundException enf){
         enf.printStackTrace();
-        return ResponseEntity.ok(new ApiBaseResponses(
-                validations.getCommonEntityNotFoundCode(),
-                unknownStatus,
-                enf.getMessage()
-        ));
+        String code = validations.getCommonEntityNotFoundCode();
+        String status = ResponseStatus.UNKNOWN.getStatus();
+        String msg = enf.getMessage();
+        return ResponseEntity.ok(new ApiBaseResponses(code,status,msg));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException ie){
         ie.printStackTrace();
-        return ResponseEntity.ok(new ApiBaseResponses(
-                "Illegal Argument Exception",
-                "40000",
-                ie.getLocalizedMessage()
-        ));
+
+        String code = validations.getAlreadyExistCode();
+        String status = ResponseStatus.ERROR.getStatus();
+        String msg = ie.getMessage();
+
+        return ResponseEntity.ok(new ApiBaseResponses(code,status,msg));
     }
 
     @ExceptionHandler(IOException.class)
     public ResponseEntity<Object> handleIllegalIOException(IOException ioe){
         ioe.printStackTrace();
-        return ResponseEntity.ok(new ApiBaseResponses(
-                "IllegalIO Exception",
-                "40000",
-                ioe.getMessage()
-        ));
+        String code = validations.getAlreadyExistCode();
+        String status = ResponseStatus.UNKNOWN.getStatus();
+        String msg = ioe.getMessage();
+        return ResponseEntity.ok(new ApiBaseResponses(code,status,msg));
     }
 }

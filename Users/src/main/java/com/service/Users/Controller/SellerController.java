@@ -6,8 +6,10 @@ import com.service.Users.APIResponse.ApiPaginatedContentResponse;
 import com.service.Users.DTO.RequestDTO.SellerSaveDTO;
 import com.service.Users.DTO.RequestDTO.SellerUpdateDTO;
 import com.service.Users.DTO.ResponseDTO.SellerResponse;
+import com.service.Users.Enums.ResponseStatus;
 import com.service.Users.Service.SellerService;
 import com.service.Users.Utils.APIEndPoints;
+import com.service.Users.Utils.LogMessages;
 import com.service.Users.Utils.ValidationCodesAndMessages;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,30 +31,17 @@ import static com.service.Users.Utils.APIEndPoints.*;
 public class SellerController {
 
     private final SellerService sellerService;
+
     private final ValidationCodesAndMessages validations;
 
-    private final String status = com.service.Users.Enums.ResponseStatus.SUCCESS.getStatus();
+    private final LogMessages logMessages;
 
-    @PostMapping(seller)
-    public ResponseEntity<APIContentResponse<SellerResponse>> createSeller(
-            @Valid @RequestBody SellerSaveDTO sellerRequest) {
+    private final String status = ResponseStatus.SUCCESS.getStatus();
 
-        log.info("Creating seller: {}", sellerRequest);
-        SellerResponse savedSeller = sellerService.create(sellerRequest);
-
-        return ResponseEntity.ok(
-                new APIContentResponse<>(
-                        status,
-                        validations.getCommonSuccessCode(),
-                        validations.getSaveSellerSuccessMessage(),
-                        seller,
-                        savedSeller
-                )
-        );
-    }
 
     @GetMapping(sellerById)
     public ResponseEntity<APIContentResponse<SellerResponse>> getSeller(@PathVariable Long id) {
+        log.info(logMessages.getFetchSellerLog(), id);
         SellerResponse sellerResponse = sellerService.getById(id);
         return ResponseEntity.ok(
                 new APIContentResponse<>(
@@ -70,7 +59,6 @@ public class SellerController {
                                                                                       @RequestParam(name = "size",required = false) Integer size,
                                                                                       @RequestParam(name = "direction",required = false) String direction,
                                                                                       @RequestParam(name = "sortField",required = false) String sortField) {
-
         Pageable pageable = PageRequest.of(page,size, Sort.Direction.valueOf(direction.toUpperCase()),sortField);
         ApiPaginatedContentResponse.Pagination pagination = ApiPaginatedContentResponse.Pagination.builder()
                 .pageNumber(page)
@@ -78,6 +66,8 @@ public class SellerController {
                 .totalPages(0)
                 .totalRecords(0L)
                 .build();
+
+        log.info(logMessages.getFetchSellersLog());
 
         var sellersList = sellerService.getAll(pageable,pagination);
         return ResponseEntity.ok(
@@ -91,11 +81,29 @@ public class SellerController {
         );
     }
 
+    @PostMapping(seller)
+    public ResponseEntity<APIContentResponse<SellerResponse>> createSeller(
+            @Valid @RequestBody SellerSaveDTO sellerRequest) {
+
+        log.info(logMessages.getCreateSellerLog(), sellerRequest);
+        SellerResponse savedSeller = sellerService.create(sellerRequest);
+
+        return ResponseEntity.ok(
+                new APIContentResponse<>(
+                        status,
+                        validations.getCommonSuccessCode(),
+                        validations.getSaveSellerSuccessMessage(),
+                        seller,
+                        savedSeller
+                )
+        );
+    }
+
     @PutMapping(seller)
     public ResponseEntity<APIContentResponse<SellerResponse>> updateSeller(
             @Valid @RequestBody SellerUpdateDTO dto) {
 
-        log.info("Updating seller: {}", dto);
+        log.info(logMessages.getUpdateSellerLog(), dto);
         SellerResponse updatedSeller = sellerService.update(dto);
         return ResponseEntity.ok(
                 new APIContentResponse<>(
@@ -110,7 +118,7 @@ public class SellerController {
 
     @DeleteMapping(sellerById)
     public ResponseEntity<ApiBaseResponses> deleteSeller(@PathVariable Long id) {
-        log.info("Deleting seller by id : {}", id);
+        log.info(logMessages.getDeleteSellerLog(), id);
         sellerService.delete(id);
         return ResponseEntity.ok(
                 new ApiBaseResponses(
