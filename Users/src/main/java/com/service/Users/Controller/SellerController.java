@@ -2,6 +2,7 @@ package com.service.Users.Controller;
 
 import com.service.Users.APIResponse.APIContentResponse;
 import com.service.Users.APIResponse.ApiBaseResponses;
+import com.service.Users.APIResponse.ApiPaginatedContentResponse;
 import com.service.Users.DTO.RequestDTO.SellerSaveDTO;
 import com.service.Users.DTO.RequestDTO.SellerUpdateDTO;
 import com.service.Users.DTO.ResponseDTO.SellerResponse;
@@ -11,6 +12,9 @@ import com.service.Users.Utils.ValidationCodesAndMessages;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -62,8 +66,20 @@ public class SellerController {
     }
 
     @GetMapping(sellers)
-    public ResponseEntity<APIContentResponse<Iterable<SellerResponse>>> getAllSellers() {
-        var sellersList = sellerService.getAll();
+    public ResponseEntity<APIContentResponse<Iterable<SellerResponse>>> getAllSellers(@RequestParam(name = "page",required = false) Integer page,
+                                                                                      @RequestParam(name = "size",required = false) Integer size,
+                                                                                      @RequestParam(name = "direction",required = false) String direction,
+                                                                                      @RequestParam(name = "sortField",required = false) String sortField) {
+
+        Pageable pageable = PageRequest.of(page,size, Sort.Direction.valueOf(direction.toUpperCase()),sortField);
+        ApiPaginatedContentResponse.Pagination pagination = ApiPaginatedContentResponse.Pagination.builder()
+                .pageNumber(page)
+                .pageSize(size)
+                .totalPages(0)
+                .totalRecords(0L)
+                .build();
+
+        var sellersList = sellerService.getAll(pageable,pagination);
         return ResponseEntity.ok(
                 new APIContentResponse<>(
                         status,

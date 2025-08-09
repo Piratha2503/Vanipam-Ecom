@@ -14,12 +14,18 @@ public class Buyer extends DateTimeUtils {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String firstName;
-    private String lastName;
+    private String firstname;
+    private String lastname;
+
+    @Column(unique = true, nullable = false)
     private String email;
+
+    @Column(unique = true, nullable = false)
     private String mobile;
     @Embedded
     private Address address;
-    private String userName;
+
+    @Column(unique = true, nullable = false)
+    private String username;
     private String password;
 }

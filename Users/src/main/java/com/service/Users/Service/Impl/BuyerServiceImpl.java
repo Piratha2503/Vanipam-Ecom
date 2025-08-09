@@ -1,85 +1,116 @@
 package com.service.Users.Service.Impl;
 
-import com.service.Users.DTO.RequestDTO.BuyerRequest;
+import com.service.Users.APIResponse.ApiPaginatedContentResponse;
+import com.service.Users.DTO.RequestDTO.BuyerSaveDTO;
+import com.service.Users.DTO.RequestDTO.BuyerUpdateDTO;
 import com.service.Users.DTO.ResponseDTO.BuyerResponse;
+import com.service.Users.Entities.Address;
 import com.service.Users.Entities.Buyer;
 import com.service.Users.Repositories.BuyerRepository;
 import com.service.Users.Service.BuyerService;
+import com.service.Users.Utils.ValidationCodesAndMessages;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class BuyerServiceImpl implements BuyerService {
 
     private final BuyerRepository buyerRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final ValidationCodesAndMessages validationMessages;
 
     @Override
-    public BuyerResponse createBuyer(BuyerRequest request) {
-        Buyer buyer = mapToEntity(request);
-        buyer = buyerRepository.save(buyer);
-        return mapToResponse(buyer);
-    }
+    public BuyerResponse create(BuyerSaveDTO dto) {
+        if (buyerRepository.existsByEmailIgnoreCase(dto.email())) {
+            throw new IllegalArgumentException("Email already in use");
+        }
+        if (buyerRepository.existsByUsernameIgnoreCase(dto.userName())) {
+            throw new IllegalArgumentException("Username already in use");
+        }
 
-    @Override
-    public List<BuyerResponse> getAllBuyers() {
-        return buyerRepository.findAll().stream().map(this::mapToResponse).collect(Collectors.toList());
-    }
-
-    @Override
-    public BuyerResponse getBuyerById(Long id) {
-        Buyer buyer = buyerRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Buyer not found with id: " + id));
-        return mapToResponse(buyer);
-    }
-
-    @Override
-    public BuyerResponse updateBuyer(Long id, BuyerRequest request) {
-        Buyer buyer = buyerRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Buyer not found with id: " + id));
-        updateEntity(buyer, request);
-        buyer = buyerRepository.save(buyer);
-        return mapToResponse(buyer);
+        return buyerToBuyerResponse(buyerRepository.save(Buyer.builder()
+                .firstname(dto.firstName())
+                .lastname(dto.lastName())
+                .email(dto.email())
+                .mobile(dto.mobile())
+                .address(dto.address())
+                .username(dto.userName())
+                .password(passwordEncoder.encode(dto.password()))
+                .build()));
     }
 
     @Override
-    public void deleteBuyer(Long id) {
-        buyerRepository.deleteById(id);
-    }
+    public BuyerResponse update(BuyerUpdateDTO dto) {
+        Buyer existing = buyerRepository.findById(dto.id())
+                .orElseThrow(() -> new EntityNotFoundException(validationMessages.getBuyerEntityNotFoundMessage()));
 
-    private Buyer mapToEntity(BuyerRequest request) {
-        Buyer buyer = new Buyer();
-        updateEntity(buyer, request);
-        return buyer;
-    }
+        String firstName = dto.firstName() != null ? dto.firstName() : existing.getFirstname();
+        String lastName = dto.lastName() != null ? dto.lastName() : existing.getLastname();
+        String email = dto.email() != null ? dto.email() : existing.getEmail();
+        String mobile = dto.mobile() != null ? dto.mobile() : existing.getMobile();
+        Address address = dto.address() != null ? dto.address() : existing.getAddress();
+        String userName = dto.userName() != null ? dto.userName() : existing.getUsername();
 
-    private void updateEntity(Buyer buyer, BuyerRequest request) {
-        buyer.setFirstName(request.firstName());
-        buyer.setLastName(request.lastName());
-        buyer.setEmail(request.email());
-        buyer.setMobile(request.mobile());
-        buyer.setAddress(request.address());
-        buyer.setUserName(request.userName());
-        buyer.setPassword(request.password());
-    }
-
-    private BuyerResponse mapToResponse(Buyer buyer) {
-        return BuyerResponse.builder()
-                .id(buyer.getId())
-                .firstName(buyer.getFirstName())
-                .lastName(buyer.getLastName())
-                .email(buyer.getEmail())
-                .mobile(buyer.getMobile())
-                .address(buyer.getAddress())
-                .userName(buyer.getUserName())
-                .created_timestamp(buyer.getCreated_timestamp())
-                .updated_timestamp(buyer.getUpdated_timestamp())
+        Buyer buyer = Buyer.builder()
+                .id(existing.getId())
+                .firstname(firstName)
+                .lastname(lastName)
+                .email(email)
+                .mobile(mobile)
+                .address(address)
+                .username(userName)
                 .build();
+
+        if (dto.password() != null) {
+            buyer.setPassword(passwordEncoder.encode(dto.password()));
+        }
+
+        return buyerToBuyerResponse(buyerRepository.save(buyer));
+    }
+
+    @Override
+    public BuyerResponse getById(Long id) {
+        return buyerToBuyerResponse(
+                buyerRepository.findById(id)
+                        .orElseThrow(() -> new EntityNotFoundException(validationMessages.getBuyerEntityNotFoundMessage()))
+        );
+    }
+
+    @Override
+    public List<BuyerResponse> getAll(Pageable pageable, ApiPaginatedContentResponse.Pagination pagination) {
+        Page<Buyer> buyers = buyerRepository.findAll(pageable);
+        pagination.setTotalPages(buyers.getTotalPages());
+        pagination.setTotalRecords(buyers.getTotalElements());
+
+        return buyers.get().map(this::buyerToBuyerResponse).toList();
+    }
+
+    @Override
+    public void delete(Long id) {
+        Buyer existing = buyerRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(validationMessages.getBuyerEntityNotFoundMessage()));
+
+        buyerRepository.delete(existing);
+    }
+
+    BuyerResponse buyerToBuyerResponse(Buyer buyer) {
+        return new BuyerResponse(
+                buyer.getId(),
+                buyer.getFirstname(),
+                buyer.getLastname(),
+                buyer.getEmail(),
+                buyer.getMobile(),
+                buyer.getAddress(),
+                buyer.getUsername(),
+                buyer.getCreated_timestamp(),
+                buyer.getUpdated_timestamp()
+        );
     }
 }

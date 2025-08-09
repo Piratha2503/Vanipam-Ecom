@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 
 @Builder
-public record BuyerRequest(
+public record BuyerSaveDTO(
         @NotBlank String firstName,
         @NotBlank String lastName,
         @Email(message = "Invalid email format") String email,

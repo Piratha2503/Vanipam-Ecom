@@ -1,15 +1,19 @@
 package com.service.Users.Service.Impl;
 
+import com.service.Users.APIResponse.ApiPaginatedContentResponse;
 import com.service.Users.DTO.RequestDTO.SellerSaveDTO;
 import com.service.Users.DTO.RequestDTO.SellerUpdateDTO;
 import com.service.Users.DTO.ResponseDTO.SellerResponse;
 import com.service.Users.Entities.Address;
+import com.service.Users.Entities.Buyer;
 import com.service.Users.Entities.Seller;
 import com.service.Users.Repositories.SellerRepository;
 import com.service.Users.Service.SellerService;
 import com.service.Users.Utils.ValidationCodesAndMessages;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -82,8 +86,13 @@ public class SellerServiceImpl implements SellerService {
     }
 
     @Override
-    public List<SellerResponse> getAll() {
-        return sellerRepository.findAll().stream().map(this::sellerToSellerResponse).toList();
+    public List<SellerResponse> getAll(Pageable pageable, ApiPaginatedContentResponse.Pagination pagination) {
+
+        Page<Seller> buyers = sellerRepository.findAll(pageable);
+        pagination.setTotalPages(buyers.getTotalPages());
+        pagination.setTotalRecords(buyers.getTotalElements());
+
+        return buyers.get().map(this::sellerToSellerResponse).toList();
     }
 
     @Override
