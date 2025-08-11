@@ -41,9 +41,6 @@ class BuyerControllerTest {
     @Mock
     private ValidationCodesAndMessages validations;
 
-    @Mock
-    private BuyerLogs logMessages;
-
     @InjectMocks
     private BuyerController buyerController;
 
