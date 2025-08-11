@@ -8,6 +8,7 @@ import com.service.Products.Entities.SubCategory;
 import com.service.Products.Repositories.MainCategoryRepository;
 import com.service.Products.Repositories.SubCategoryRepository;
 import com.service.Products.Service.SubCategoryService;
+import com.service.Products.Utils.ValidationCodesAndMessages;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,15 +23,16 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
     private final SubCategoryRepository subCategoryRepository;
     private final MainCategoryRepository mainCategoryRepository;
+    private final ValidationCodesAndMessages validations;
 
     @Override
     public SubCategoryResponse create(SubCategoryRequest dto) {
         if (subCategoryRepository.existsBySubCategoryNameIgnoreCase(dto.subCategoryName())) {
-            throw new IllegalArgumentException("SubCategory with name '" + dto.subCategoryName() + "' already exists");
+            throw new IllegalArgumentException(validations.getSubCategoryAlreadyExistMessage().replace("{0}", dto.subCategoryName()));
         }
 
         MainCategory mainCategory = mainCategoryRepository.findById(dto.mainCategoryId())
-                .orElseThrow(() -> new EntityNotFoundException("MainCategory not found with id: " + dto.mainCategoryId()));
+                .orElseThrow(() -> new EntityNotFoundException(validations.getMainCategoryEntityNotFoundMessage()+" "+dto.mainCategoryId()));
 
         SubCategory subCategory = new SubCategory();
         subCategory.setSubCategoryName(dto.subCategoryName());
@@ -44,7 +46,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     @Override
     public SubCategoryResponse update(SubCategoryRequest dto) {
         SubCategory existing = subCategoryRepository.findById(dto.id())
-                .orElseThrow(() -> new EntityNotFoundException("SubCategory not found with id: " + dto.id()));
+                .orElseThrow(() -> new EntityNotFoundException(validations.getSubCategoryEntityNotFoundMessage()+" "+ dto.id()));
 
         if (dto.subCategoryName() != null && !dto.subCategoryName().isBlank()) {
             existing.setSubCategoryName(dto.subCategoryName());
@@ -52,7 +54,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
         if (dto.mainCategoryId() != null) {
             MainCategory mainCategory = mainCategoryRepository.findById(dto.mainCategoryId())
-                    .orElseThrow(() -> new EntityNotFoundException("MainCategory not found with id: " + dto.mainCategoryId()));
+                    .orElseThrow(() -> new EntityNotFoundException(validations.getMainCategoryEntityNotFoundMessage()+" "+dto.mainCategoryId()));
             existing.setMainCategory(mainCategory);
         }
 
@@ -64,7 +66,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     @Override
     public SubCategoryResponse getById(Long id) {
         SubCategory subCategory = subCategoryRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("SubCategory not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(validations.getSubCategoryEntityNotFoundMessage()+" " + id));
         return mapToResponse(subCategory);
     }
 
@@ -81,7 +83,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     @Override
     public void delete(Long id) {
         SubCategory existing = subCategoryRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("SubCategory not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(validations.getSubCategoryEntityNotFoundMessage()+" " + id));
         subCategoryRepository.delete(existing);
     }
 

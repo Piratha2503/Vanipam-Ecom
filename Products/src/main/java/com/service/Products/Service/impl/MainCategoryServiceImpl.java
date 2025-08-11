@@ -6,6 +6,7 @@ import com.service.Products.DTO.ResponseDTO.MainCategoryResponse;
 import com.service.Products.Entities.MainCategory;
 import com.service.Products.Repositories.MainCategoryRepository;
 import com.service.Products.Service.MainCategoryService;
+import com.service.Products.Utils.ValidationCodesAndMessages;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,11 +20,12 @@ import java.util.List;
 public class MainCategoryServiceImpl implements MainCategoryService {
 
     private final MainCategoryRepository mainCategoryRepository;
+    private final ValidationCodesAndMessages validations;
 
     @Override
     public MainCategoryResponse create(MainCategoryRequest dto) {
         if (mainCategoryRepository.existsByMainCategoryNameIgnoreCase(dto.mainCategoryName())) {
-            throw new IllegalArgumentException("MainCategory with name '" + dto.mainCategoryName() + "' already exists");
+            throw new IllegalArgumentException(validations.getMainCategoryAlreadyExistMessage().replace("{0}", dto.mainCategoryName()));
         }
 
         MainCategory mainCategory = new MainCategory();
@@ -37,7 +39,7 @@ public class MainCategoryServiceImpl implements MainCategoryService {
     @Override
     public MainCategoryResponse update(MainCategoryRequest dto) {
         MainCategory existing = mainCategoryRepository.findById(dto.id())
-                .orElseThrow(() -> new EntityNotFoundException("MainCategory not found with id: " + dto.id()));
+                .orElseThrow(() -> new EntityNotFoundException(validations.getMainCategoryEntityNotFoundMessage() + dto.id()));
 
         if (dto.mainCategoryName() != null && !dto.mainCategoryName().isBlank()) {
             existing.setMainCategoryName(dto.mainCategoryName());
@@ -51,7 +53,7 @@ public class MainCategoryServiceImpl implements MainCategoryService {
     @Override
     public MainCategoryResponse getById(Long id) {
         MainCategory mainCategory = mainCategoryRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("MainCategory not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(validations.getMainCategoryEntityNotFoundMessage() + id));
         return mapToResponse(mainCategory);
     }
 
@@ -68,7 +70,7 @@ public class MainCategoryServiceImpl implements MainCategoryService {
     @Override
     public void delete(Long id) {
         MainCategory existing = mainCategoryRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("MainCategory not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(validations.getMainCategoryEntityNotFoundMessage() + id));
         mainCategoryRepository.delete(existing);
     }
 

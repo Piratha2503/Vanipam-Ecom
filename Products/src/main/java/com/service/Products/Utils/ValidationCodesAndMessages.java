@@ -34,6 +34,8 @@ public class ValidationCodesAndMessages {
     private String deleteMainCategorySuccessMessage;
     @Value("${message.null.entity.mainCategory}")
     private String mainCategoryEntityNotFoundMessage;
+    @Value("${message.already.exist.mainCategory}")
+    private String mainCategoryAlreadyExistMessage;
 
     // Sub Category messages
     @Value("${message.success.save.subCategory}")
@@ -46,6 +48,8 @@ public class ValidationCodesAndMessages {
     private String deleteSubCategorySuccessMessage;
     @Value("${message.null.entity.subCategory}")
     private String subCategoryEntityNotFoundMessage;
+    @Value("${message.already.exist.subCategory}")
+    private String subCategoryAlreadyExistMessage;
 
 
     // Product messages
