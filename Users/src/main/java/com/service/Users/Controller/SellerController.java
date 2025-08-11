@@ -20,6 +20,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
 import static com.service.Users.Utils.APIEndPoints.*;
 
 @RestController
@@ -56,10 +59,10 @@ public class SellerController {
     }
 
     @GetMapping(sellers)
-    public ResponseEntity<APIContentResponse<Iterable<SellerResponse>>> getAllSellers(@RequestParam(name = "page",required = false) Integer page,
-                                                                                      @RequestParam(name = "size",required = false) Integer size,
-                                                                                      @RequestParam(name = "direction",required = false) String direction,
-                                                                                      @RequestParam(name = "sortField",required = false) String sortField) {
+    public ResponseEntity<ApiPaginatedContentResponse<List<SellerResponse>>> getAllSellers(@RequestParam(name = "page",required = false) Integer page,
+                                                                                           @RequestParam(name = "size",required = false) Integer size,
+                                                                                           @RequestParam(name = "direction",required = false) String direction,
+                                                                                           @RequestParam(name = "sortField",required = false) String sortField) {
         log.info(logMessages.getFetchingSellersLog());
 
         int pageNo = page != null ? page : 0;
@@ -81,11 +84,12 @@ public class SellerController {
         log.info(logMessages.getFetchedSellersLog());
 
         return ResponseEntity.ok(
-                new APIContentResponse<>(
+                new ApiPaginatedContentResponse<>(
                         validations.getCommonSuccessCode(), status,
                         validations.getGetSellerSuccessMessage(),
                         sellers,
-                        sellersList
+                        sellersList,
+                        pagination
                 )
         );
     }
@@ -116,7 +120,8 @@ public class SellerController {
         log.info(logMessages.getUpdatedSellerLog());
         return ResponseEntity.ok(
                 new APIContentResponse<>(
-                        validations.getCommonSuccessCode(), status,
+                        validations.getCommonSuccessCode(),
+                        status,
                         validations.getUpdateSellerSuccessMessage(),
                         seller,
                         updatedSeller
@@ -131,8 +136,8 @@ public class SellerController {
         log.info(logMessages.getDeletedSellerLog(), id);
         return ResponseEntity.ok(
                 new ApiBaseResponses(
-                        status,
                         validations.getCommonSuccessCode(),
+                        status,
                         validations.getDeleteSellerSuccessMessage()));
     }
 }

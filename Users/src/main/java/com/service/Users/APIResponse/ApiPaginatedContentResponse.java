@@ -11,13 +11,13 @@ public class ApiPaginatedContentResponse<T> extends APIContentResponse<T>{
 
     private Map<String,T> contents = new HashMap<>();
 
-    public ApiPaginatedContentResponse(String validation_status, String validation_Code, String validation_message, String title, T content) {
+    public ApiPaginatedContentResponse(String validation_Code, String validation_status,  String validation_message, String title, T content) {
         super(validation_Code, validation_status, validation_message, title, content);
     }
 
     private Pagination pagination;
 
-    public ApiPaginatedContentResponse(String validation_status, String validation_Code, String validation_message, String title, T content, Pagination pagination){
+    public ApiPaginatedContentResponse(String validation_Code, String validation_status,  String validation_message, String title, T content, Pagination pagination){
         super(validation_Code, validation_status, validation_message, title, content);
         contents.put(title,content);
         this.pagination = pagination;

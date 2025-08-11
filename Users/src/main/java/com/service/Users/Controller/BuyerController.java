@@ -20,6 +20,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
 import static com.service.Users.Utils.APIEndPoints.*;
 
 @RestController
@@ -52,7 +55,7 @@ public class BuyerController {
     }
 
     @GetMapping(buyers)
-    public ResponseEntity<APIContentResponse<Iterable<BuyerResponse>>> getAllBuyers(
+    public ResponseEntity<ApiPaginatedContentResponse<List<BuyerResponse>>> getAllBuyers(
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "size", required = false) Integer size,
             @RequestParam(name = "direction", required = false) String direction,
@@ -80,11 +83,12 @@ public class BuyerController {
         log.info(logMessages.getFetchedBuyersLog());
 
         return ResponseEntity.ok(
-                new APIContentResponse<>(
+                new ApiPaginatedContentResponse<>(
                         validations.getCommonSuccessCode(), status,
                         validations.getGetBuyerSuccessMessage(),
                         buyers,
-                        buyersList
+                        buyersList,
+                        pagination
                 )
         );
     }
@@ -135,8 +139,8 @@ public class BuyerController {
 
         return ResponseEntity.ok(
                 new ApiBaseResponses(
-                        status,
                         validations.getCommonSuccessCode(),
+                        status,
                         validations.getDeleteBuyerSuccessMessage()
                 )
         );
