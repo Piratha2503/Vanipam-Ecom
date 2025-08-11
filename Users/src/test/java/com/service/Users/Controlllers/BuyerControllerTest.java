@@ -190,7 +190,7 @@ class BuyerControllerTest {
         verify(buyerService, times(1)).delete(buyerId);
 
         Assertions.assertNotNull(entity.getBody());
-        assertEquals(100, entity.getBody().getValidation_Code());
+        assertEquals(validations.getCommonSuccessCode(), entity.getBody().getValidation_Code());
         Assertions.assertNotNull(entity.getBody());
         assertEquals(ResponseStatus.SUCCESS.getStatus(),entity.getBody().getValidation_status());
         Assertions.assertNotNull(entity.getBody());
