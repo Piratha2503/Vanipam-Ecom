@@ -1,27 +1,21 @@
 package com.service.Products.Service;
 
-import com.service.Products.DTO.RequestDTO.MainCategoryRequest;
-import com.service.Products.DTO.RequestDTO.SubcategoryRequest;
-import com.service.Products.DTO.ResponseDTO.MainCategoryResponse;
-import com.service.Products.DTO.ResponseDTO.SubcategoryResponse;
-import com.service.Products.Entities.SubCategory;
+import com.service.Products.APIResponse.ApiPaginatedContentResponse;
+import com.service.Products.DTO.RequestDTO.SubCategoryRequest;
+import com.service.Products.DTO.ResponseDTO.SubCategoryResponse;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface SubCategoryService {
-    List<SubcategoryResponse> getSubCategoryList();
 
-    boolean existSubCategoryByName(String subCategoryName);
+    SubCategoryResponse getById(Long id);
 
-    void saveSubCategory(SubcategoryRequest subcategoryRequest);
+    List<SubCategoryResponse> getAll(Pageable pageable, ApiPaginatedContentResponse.Pagination pagination);
 
-    boolean existSubCategoryByNameAndIdNot(String mainCategoryName, Long id);
+    SubCategoryResponse create(SubCategoryRequest request);
 
-    void updateSubCategory(SubcategoryRequest subcategoryRequest);
+    SubCategoryResponse update(SubCategoryRequest request);
 
-    boolean existSubCategoryById(Long id);
-
-    void deleteSubCategory(Long id);
-
-    SubcategoryResponse getSubCategoryById(Long id);
+    void delete(Long id);
 }

@@ -1,9 +1,5 @@
 package com.service.Products.DTO.RequestDTO;
 
-import lombok.Data;
+import jakarta.validation.constraints.NotNull;
 
-@Data
-public class MainCategoryRequest {
-    private Long id;
-    private String mainCategoryName;
-}
+public record MainCategoryRequest(Long id, @NotNull String mainCategoryName) {}

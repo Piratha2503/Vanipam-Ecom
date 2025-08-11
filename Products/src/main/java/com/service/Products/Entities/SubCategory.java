@@ -17,6 +17,6 @@ public class SubCategory extends DateTimeUtils {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "main_category_id",nullable = false)
     private MainCategory mainCategory;
-    @OneToMany(mappedBy = "sub_category")
+    @OneToMany(mappedBy = "id")
     private List<Product> products;
 }

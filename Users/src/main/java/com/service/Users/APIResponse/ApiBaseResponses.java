@@ -3,7 +3,6 @@ package com.service.Users.APIResponse;
 import lombok.Data;
 
 @Data
-
 public class ApiBaseResponses {
     private String validation_Code;
     private String validation_status;

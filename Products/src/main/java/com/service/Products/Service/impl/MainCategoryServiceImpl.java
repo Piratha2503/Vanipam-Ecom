@@ -1,75 +1,78 @@
 package com.service.Products.Service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.service.Products.APIResponse.ApiPaginatedContentResponse;
 import com.service.Products.DTO.RequestDTO.MainCategoryRequest;
 import com.service.Products.DTO.ResponseDTO.MainCategoryResponse;
 import com.service.Products.Entities.MainCategory;
 import com.service.Products.Repositories.MainCategoryRepository;
 import com.service.Products.Service.MainCategoryService;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
+@RequiredArgsConstructor
 public class MainCategoryServiceImpl implements MainCategoryService {
 
-    @Autowired
-    private MainCategoryRepository mainCategoryRepository;
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final MainCategoryRepository mainCategoryRepository;
 
     @Override
-    public List<MainCategoryResponse> getMainCategoryList() {
-        return mainCategoryRepository.findAll().stream().map(mainCategory ->
-                MainCategoryResponse.builder().mainCategoryName(mainCategory.getMainCategoryName()).id(mainCategory.getId()).build()).toList();
+    public MainCategoryResponse create(MainCategoryRequest dto) {
+        if (mainCategoryRepository.existsByMainCategoryNameIgnoreCase(dto.mainCategoryName())) {
+            throw new IllegalArgumentException("MainCategory with name '" + dto.mainCategoryName() + "' already exists");
+        }
+
+        MainCategory mainCategory = new MainCategory();
+        mainCategory.setMainCategoryName(dto.mainCategoryName());
+
+        MainCategory saved = mainCategoryRepository.save(mainCategory);
+
+        return mapToResponse(saved);
     }
 
     @Override
-    public MainCategoryResponse getMainCategoryById(Long id) {
-        MainCategory mainCategory = mainCategoryRepository.findById(id).orElseThrow(
-                () -> new NoSuchElementException("MainCategory not found with id: " + id));
-        return MainCategoryResponse.builder().mainCategoryName(mainCategory.getMainCategoryName())
-                .id(mainCategory.getId()).build();
+    public MainCategoryResponse update(MainCategoryRequest dto) {
+        MainCategory existing = mainCategoryRepository.findById(dto.id())
+                .orElseThrow(() -> new EntityNotFoundException("MainCategory not found with id: " + dto.id()));
+
+        if (dto.mainCategoryName() != null && !dto.mainCategoryName().isBlank()) {
+            existing.setMainCategoryName(dto.mainCategoryName());
+        }
+
+        MainCategory updated = mainCategoryRepository.save(existing);
+
+        return mapToResponse(updated);
     }
 
     @Override
-    public boolean existMainCategoryByName(String mainCategoryName) {
-        return mainCategoryRepository.existsByMainCategoryNameIgnoreCase(mainCategoryName);
+    public MainCategoryResponse getById(Long id) {
+        MainCategory mainCategory = mainCategoryRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("MainCategory not found with id: " + id));
+        return mapToResponse(mainCategory);
     }
 
     @Override
-    public void saveMainCategory(MainCategoryRequest mainCategoryRequest) {
-        mainCategoryRepository.save(copyValuesFromRequest(mainCategoryRequest,new MainCategory()));
+    public List<MainCategoryResponse> getAll(Pageable pageable, ApiPaginatedContentResponse.Pagination pagination) {
+        Page<MainCategory> page = mainCategoryRepository.findAll(pageable);
+        pagination.setTotalPages(page.getTotalPages());
+        pagination.setTotalRecords(pagination.getTotalRecords());
+        return page.stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 
     @Override
-    public boolean existMainCategoryByNameAndIdNot(String mainCategoryName, Long id) {
-        return mainCategoryRepository.existsByMainCategoryNameIgnoreCaseAndIdNot(mainCategoryName,id);
+    public void delete(Long id) {
+        MainCategory existing = mainCategoryRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("MainCategory not found with id: " + id));
+        mainCategoryRepository.delete(existing);
     }
 
-    @Override
-    public void updateMainCategory(MainCategoryRequest mainCategoryRequest) {
-        MainCategory mainCategory = mainCategoryRepository.findById(mainCategoryRequest.getId()).orElseThrow(
-                () -> new NoSuchElementException("MainCategory not found with id: " + mainCategoryRequest.getId())
-        );
-        mainCategoryRepository.save(copyValuesFromRequest(mainCategoryRequest,mainCategory));
-    }
-
-    @Override
-    public boolean existMainCategoryById(Long id) {
-        return mainCategoryRepository.existsById(id);
-    }
-
-    @Override
-    public void deleteMainCategory(Long id) {
-        mainCategoryRepository.deleteById(id);
-    }
-
-
-    private MainCategory copyValuesFromRequest(MainCategoryRequest mainCategoryRequest, MainCategory mainCategory){
-        BeanUtils.copyProperties(mainCategoryRequest,mainCategory);
-        return mainCategory;
+    private MainCategoryResponse mapToResponse(MainCategory mainCategory) {
+        return new MainCategoryResponse( mainCategory.getId(), mainCategory.getMainCategoryName());
     }
 }

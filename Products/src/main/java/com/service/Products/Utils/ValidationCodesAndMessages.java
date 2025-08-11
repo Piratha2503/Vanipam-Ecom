@@ -23,6 +23,31 @@ public class ValidationCodesAndMessages {
     @Value("${code.already.exist}")
     private String alreadyExistCode;
 
+    // Main Category messages
+    @Value("${message.success.save.mainCategory}")
+    private String saveMainCategorySuccessMessage;
+    @Value("${message.success.update.mainCategory}")
+    private String updateMainCategorySuccessMessage;
+    @Value("${message.success.get.mainCategory}")
+    private String getMainCategorySuccessMessage;
+    @Value("${message.success.delete.mainCategory}")
+    private String deleteMainCategorySuccessMessage;
+    @Value("${message.null.entity.mainCategory}")
+    private String mainCategoryEntityNotFoundMessage;
+
+    // Sub Category messages
+    @Value("${message.success.save.subCategory}")
+    private String saveSubCategorySuccessMessage;
+    @Value("${message.success.update.subCategory}")
+    private String updateSubCategorySuccessMessage;
+    @Value("${message.success.get.subCategory}")
+    private String getSubCategorySuccessMessage;
+    @Value("${message.success.delete.subCategory}")
+    private String deleteSubCategorySuccessMessage;
+    @Value("${message.null.entity.subCategory}")
+    private String subCategoryEntityNotFoundMessage;
+
+
     // Product messages
     @Value("${message.success.save.product}")
     private String saveProductSuccessMessage;

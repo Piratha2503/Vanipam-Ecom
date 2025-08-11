@@ -1,24 +1,21 @@
 package com.service.Products.Service;
 
+import com.service.Products.APIResponse.ApiPaginatedContentResponse;
 import com.service.Products.DTO.RequestDTO.MainCategoryRequest;
 import com.service.Products.DTO.ResponseDTO.MainCategoryResponse;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface MainCategoryService {
-    List<MainCategoryResponse> getMainCategoryList();
 
-    boolean existMainCategoryByName(String mainCategoryName);
+    MainCategoryResponse create(MainCategoryRequest dto);
 
-    void saveMainCategory(MainCategoryRequest mainCategoryRequest);
+    MainCategoryResponse update(MainCategoryRequest dto);
 
-    boolean existMainCategoryByNameAndIdNot(String mainCategoryName, Long id);
+    MainCategoryResponse getById(Long id);
 
-    void updateMainCategory(MainCategoryRequest mainCategoryRequest);
+    List<MainCategoryResponse> getAll(Pageable pageable, ApiPaginatedContentResponse.Pagination pagination);
 
-    boolean existMainCategoryById(Long id);
-
-    void deleteMainCategory(Long id);
-
-    MainCategoryResponse getMainCategoryById(Long id);
+    void delete(Long id);
 }

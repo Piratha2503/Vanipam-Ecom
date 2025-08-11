@@ -1,87 +1,98 @@
 package com.service.Products.Service.impl;
 
-import com.service.Products.DTO.RequestDTO.SubcategoryRequest;
-import com.service.Products.DTO.ResponseDTO.MainCategoryResponse;
-import com.service.Products.DTO.ResponseDTO.SubcategoryResponse;
+import com.service.Products.APIResponse.ApiPaginatedContentResponse;
+import com.service.Products.DTO.RequestDTO.SubCategoryRequest;
+import com.service.Products.DTO.ResponseDTO.SubCategoryResponse;
 import com.service.Products.Entities.MainCategory;
 import com.service.Products.Entities.SubCategory;
+import com.service.Products.Repositories.MainCategoryRepository;
 import com.service.Products.Repositories.SubCategoryRepository;
-import com.service.Products.Service.MainCategoryService;
 import com.service.Products.Service.SubCategoryService;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class SubCategoryServiceImpl implements SubCategoryService {
-    @Autowired
-    private SubCategoryRepository subCategoryRepository;
-    @Autowired
-    private MainCategoryService mainCategoryService;
+
+    private final SubCategoryRepository subCategoryRepository;
+    private final MainCategoryRepository mainCategoryRepository;
 
     @Override
-    public List<SubcategoryResponse> getSubCategoryList() {
-        return subCategoryRepository.findAll().stream().map(this::copyToSubcategoryResponse).toList();
-    }
+    public SubCategoryResponse create(SubCategoryRequest dto) {
+        if (subCategoryRepository.existsBySubCategoryNameIgnoreCase(dto.subCategoryName())) {
+            throw new IllegalArgumentException("SubCategory with name '" + dto.subCategoryName() + "' already exists");
+        }
 
-    @Override
-    public boolean existSubCategoryByName(String subCategoryName) {
-        return false;
-    }
+        MainCategory mainCategory = mainCategoryRepository.findById(dto.mainCategoryId())
+                .orElseThrow(() -> new EntityNotFoundException("MainCategory not found with id: " + dto.mainCategoryId()));
 
-    @Override
-    public void saveSubCategory(SubcategoryRequest subcategoryRequest) {
         SubCategory subCategory = new SubCategory();
-        MainCategoryResponse mainCategoryResponse = mainCategoryService.getMainCategoryById(subcategoryRequest.getMainCategory_id());
-        MainCategory mainCategory = new MainCategory();
-        BeanUtils.copyProperties(mainCategoryResponse,mainCategory);
+        subCategory.setSubCategoryName(dto.subCategoryName());
         subCategory.setMainCategory(mainCategory);
-        BeanUtils.copyProperties(subcategoryRequest,subCategory);
-        subCategoryRepository.save(subCategory);
+
+        SubCategory saved = subCategoryRepository.save(subCategory);
+
+        return mapToResponse(saved);
     }
 
     @Override
-    public boolean existSubCategoryByNameAndIdNot(String subCategoryName, Long id) {
-        return false;
+    public SubCategoryResponse update(SubCategoryRequest dto) {
+        SubCategory existing = subCategoryRepository.findById(dto.id())
+                .orElseThrow(() -> new EntityNotFoundException("SubCategory not found with id: " + dto.id()));
+
+        if (dto.subCategoryName() != null && !dto.subCategoryName().isBlank()) {
+            existing.setSubCategoryName(dto.subCategoryName());
+        }
+
+        if (dto.mainCategoryId() != null) {
+            MainCategory mainCategory = mainCategoryRepository.findById(dto.mainCategoryId())
+                    .orElseThrow(() -> new EntityNotFoundException("MainCategory not found with id: " + dto.mainCategoryId()));
+            existing.setMainCategory(mainCategory);
+        }
+
+        SubCategory updated = subCategoryRepository.save(existing);
+
+        return mapToResponse(updated);
     }
 
     @Override
-    public void updateSubCategory(SubcategoryRequest subcategoryRequest) {
-        SubCategory subCategory = subCategoryRepository.getReferenceById(subcategoryRequest.getId());
-        BeanUtils.copyProperties(subcategoryRequest,subCategory);
-        MainCategoryResponse mainCategoryResponse = mainCategoryService.getMainCategoryById(subcategoryRequest.getMainCategory_id());
-        MainCategory mainCategory = new MainCategory();
-        BeanUtils.copyProperties(mainCategoryResponse,mainCategory);
-        subCategory.setMainCategory(mainCategory);
-        BeanUtils.copyProperties(subcategoryRequest,subCategory);
-        subCategoryRepository.save(subCategory);
+    public SubCategoryResponse getById(Long id) {
+        SubCategory subCategory = subCategoryRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("SubCategory not found with id: " + id));
+        return mapToResponse(subCategory);
     }
 
     @Override
-    public boolean existSubCategoryById(Long id) {
-        return subCategoryRepository.existsById(id);
+    public List<SubCategoryResponse> getAll(Pageable pageable, ApiPaginatedContentResponse.Pagination pagination) {
+        Page<SubCategory> page = subCategoryRepository.findAll(pageable);
+        pagination.setTotalPages(page.getTotalPages());
+        pagination.setTotalRecords(page.getTotalElements());
+        return page.stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 
     @Override
-    public void deleteSubCategory(Long id) {
-
+    public void delete(Long id) {
+        SubCategory existing = subCategoryRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("SubCategory not found with id: " + id));
+        subCategoryRepository.delete(existing);
     }
 
-    @Override
-    public SubcategoryResponse getSubCategoryById(Long id) {
-        return copyToSubcategoryResponse(subCategoryRepository.getReferenceById(id));
+    private SubCategoryResponse mapToResponse(SubCategory subCategory) {
+        return new SubCategoryResponse(
+                subCategory.getId(),
+                subCategory.getSubCategoryName(),
+                subCategory.getMainCategory().getId(),
+                subCategory.getMainCategory().getMainCategoryName()
+        );
     }
 
-    public SubcategoryResponse copyToSubcategoryResponse(SubCategory subCategory){
-        return SubcategoryResponse.builder()
-                .id(subCategory.getId())
-                .subCategoryName(subCategory.getSubCategoryName())
-                .mainCategoryResponse(MainCategoryResponse.builder()
-                        .id(subCategory.getMainCategory().getId())
-                        .mainCategoryName(subCategory.getMainCategory().getMainCategoryName())
-                        .build())
-                .build();
-    }
+
 }

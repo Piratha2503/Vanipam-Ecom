@@ -4,7 +4,6 @@ package com.service.Products.DTO.ResponseDTO;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public record ProductResponseDTO(
         Long id,

@@ -17,7 +17,7 @@ public class MainCategory extends DateTimeUtils {
     @Column(name = "mainCategory_name", nullable = false)
     private String mainCategoryName;
 
-    @OneToMany(mappedBy = "main_category")
+    @OneToMany(mappedBy = "id")
     private List<SubCategory> subCategories;
 
 

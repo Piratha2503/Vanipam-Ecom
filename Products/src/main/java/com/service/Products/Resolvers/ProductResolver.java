@@ -2,6 +2,7 @@ package com.service.Products.Resolvers;
 
 import com.service.Products.APIResponse.ApiBaseResponses;
 import com.service.Products.DTO.RequestDTO.ProductRequest;
+import com.service.Products.DTO.ResponseDTO.ProductResponseDTO;
 import com.service.Products.Service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
@@ -17,14 +18,14 @@ public class ProductResolver {
     private ProductService productService;
 
     @QueryMapping
-    public List<ProductResponse> getProductList(){
-        return productService.getProductList();
+    public List<ProductResponseDTO> getProductList(){
+        return null;
     }
 
     @QueryMapping
-    public ProductResponse getProductById(@Argument Long id){
+    public ProductResponseDTO getProductById(@Argument Long id){
         System.out.println(id);
-        return productService.getProductById(id);
+        return productService.getById(id);
     }
 
     @QueryMapping
