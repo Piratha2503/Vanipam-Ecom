@@ -97,7 +97,7 @@ class BuyerControllerTest {
 
         Map<String,List<BuyerResponse>> map = Map.of(APIEndPoints.buyers,mockBuyersList);
 
-        when(buyerService.getAll(any(Pageable.class),any())).thenReturn(mockBuyersList);
+        when(buyerService.getAll(any(Pageable.class), any(ApiPaginatedContentResponse.Pagination.class))).thenReturn(mockBuyersList);
 
         ResponseEntity<ApiPaginatedContentResponse<List<BuyerResponse>>> entity =
                 buyerController.getAllBuyers(0,10, Sort.Direction.ASC.name(),"id");

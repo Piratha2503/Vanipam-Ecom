@@ -1,4 +1,4 @@
-package com.service.Users.Controlllers;
+package com.service.Users.Services;
 
 import com.service.Users.DTO.RequestDTO.BuyerSaveDTO;
 import com.service.Users.DTO.ResponseDTO.BuyerResponse;
