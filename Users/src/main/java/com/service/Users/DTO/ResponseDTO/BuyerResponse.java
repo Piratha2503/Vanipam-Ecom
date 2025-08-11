@@ -13,7 +13,7 @@ public record BuyerResponse(
         String email,
         String mobile,
         Address address,
-        String userName,
+        String username,
         Timestamp created_timestamp,
         Timestamp updated_timestamp) {
 

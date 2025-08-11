@@ -47,8 +47,7 @@ public class SellerController {
 
         return ResponseEntity.ok(
                 new APIContentResponse<>(
-                        status,
-                        validations.getCommonSuccessCode(),
+                        validations.getCommonSuccessCode(), status,
                         validations.getGetSellerSuccessMessage(),
                         seller,
                         sellerResponse
@@ -83,8 +82,7 @@ public class SellerController {
 
         return ResponseEntity.ok(
                 new APIContentResponse<>(
-                        status,
-                        validations.getCommonSuccessCode(),
+                        validations.getCommonSuccessCode(), status,
                         validations.getGetSellerSuccessMessage(),
                         sellers,
                         sellersList
@@ -101,8 +99,7 @@ public class SellerController {
         log.info(logMessages.getCreatedSellerLog());
         return ResponseEntity.ok(
                 new APIContentResponse<>(
-                        status,
-                        validations.getCommonSuccessCode(),
+                        validations.getCommonSuccessCode(), status,
                         validations.getSaveSellerSuccessMessage(),
                         seller,
                         savedSeller
@@ -119,8 +116,7 @@ public class SellerController {
         log.info(logMessages.getUpdatedSellerLog());
         return ResponseEntity.ok(
                 new APIContentResponse<>(
-                        status,
-                        validations.getCommonSuccessCode(),
+                        validations.getCommonSuccessCode(), status,
                         validations.getUpdateSellerSuccessMessage(),
                         seller,
                         updatedSeller

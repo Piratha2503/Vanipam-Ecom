@@ -113,4 +113,19 @@ public class BuyerServiceImpl implements BuyerService {
                 buyer.getUpdated_timestamp()
         );
     }
+
+    @Override
+    public Boolean existsByEmail(String email) {
+        return buyerRepository.existsByEmailIgnoreCase(email);
+    }
+
+    @Override
+    public Boolean existsByPhone(String phone) {
+        return null;
+    }
+
+    @Override
+    public Boolean existsByUserName(String userName) {
+        return null;
+    }
 }

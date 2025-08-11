@@ -43,8 +43,7 @@ public class BuyerController {
 
         return ResponseEntity.ok(
                 new APIContentResponse<>(
-                        status,
-                        validations.getCommonSuccessCode(),
+                        validations.getCommonSuccessCode(), status,
                         validations.getGetBuyerSuccessMessage(),
                         buyer,
                         buyerResponse
@@ -82,8 +81,7 @@ public class BuyerController {
 
         return ResponseEntity.ok(
                 new APIContentResponse<>(
-                        status,
-                        validations.getCommonSuccessCode(),
+                        validations.getCommonSuccessCode(), status,
                         validations.getGetBuyerSuccessMessage(),
                         buyers,
                         buyersList
@@ -101,8 +99,8 @@ public class BuyerController {
 
         return ResponseEntity.ok(
                 new APIContentResponse<>(
-                        status,
                         validations.getCommonSuccessCode(),
+                        status,
                         validations.getSaveBuyerSuccessMessage(),
                         buyer,
                         savedBuyer
@@ -120,8 +118,7 @@ public class BuyerController {
 
         return ResponseEntity.ok(
                 new APIContentResponse<>(
-                        status,
-                        validations.getCommonSuccessCode(),
+                        validations.getCommonSuccessCode(), status,
                         validations.getUpdateBuyerSuccessMessage(),
                         buyer,
                         updatedBuyer

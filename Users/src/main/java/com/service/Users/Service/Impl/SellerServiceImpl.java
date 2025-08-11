@@ -29,7 +29,6 @@ public class SellerServiceImpl implements SellerService {
 
     private final ValidationCodesAndMessages validationMessages;
 
-
     @Override
     public SellerResponse create(SellerSaveDTO dto) {
         if (sellerRepository.existsByEmailIgnoreCase(dto.email()))

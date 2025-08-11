@@ -10,6 +10,12 @@ import java.util.List;
 
 public interface BuyerService {
 
+    Boolean existsByEmail(String email);
+
+    Boolean existsByPhone(String phone);
+
+    Boolean existsByUserName(String userName);
+
     BuyerResponse create(BuyerSaveDTO request);
 
     List<BuyerResponse> getAll(Pageable pageable, ApiPaginatedContentResponse.Pagination pagination);
