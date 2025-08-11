@@ -2,7 +2,6 @@ package com.service.Products.Resolvers;
 
 import com.service.Products.APIResponse.ApiBaseResponses;
 import com.service.Products.DTO.RequestDTO.ProductRequest;
-import com.service.Products.DTO.ResponseDTO.ProductResponse;
 import com.service.Products.Service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;

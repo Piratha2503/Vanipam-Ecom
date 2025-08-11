@@ -1,76 +1,127 @@
 package com.service.Products.Service.impl;
 
-import com.service.Products.DTO.RequestDTO.ProductRequest;
-import com.service.Products.DTO.ResponseDTO.MainCategoryResponse;
-import com.service.Products.DTO.ResponseDTO.ProductResponse;
-import com.service.Products.DTO.ResponseDTO.SubcategoryResponse;
+import com.service.Products.APIResponse.ApiPaginatedContentResponse;
+import com.service.Products.DTO.RequestDTO.ProductSaveDTO;
+import com.service.Products.DTO.RequestDTO.ProductUpdateDTO;
+import com.service.Products.DTO.ResponseDTO.ProductResponseDTO;
 import com.service.Products.Entities.Brand;
 import com.service.Products.Entities.Product;
 import com.service.Products.Entities.SubCategory;
+import com.service.Products.ExceptionHandle.CustomExceptions.DuplicateValuesException;
+import com.service.Products.Repositories.BrandRepository;
 import com.service.Products.Repositories.ProductRepository;
 import com.service.Products.Repositories.SubCategoryRepository;
 import com.service.Products.Service.ProductService;
+import com.service.Products.Utils.ValidationCodesAndMessages;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.core.KafkaTemplate;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
-    @Autowired
-    private ProductRepository productRepository;
-    @Autowired
-    private SubCategoryRepository subCategoryRepository;
-    @Autowired
-    private KafkaTemplate<String,Object> kafkaTemplate;
+    private final ProductRepository productRepository;
+    private final BrandRepository brandRepository;
+    private final SubCategoryRepository subCategoryRepository;
+    private final ValidationCodesAndMessages validationMessages;
 
     @Override
-    public ProductResponse getProductById(Long id){
+    public ProductResponseDTO create(ProductSaveDTO dto) {
+        // Example duplicate check: Product name unique within brand (customize as needed)
+        if (productRepository.existsByProductNameAndBrandId(dto.productName(), dto.brandId()))
+            throw new DuplicateValuesException("Product with this name already exists for the brand");
 
-        return copyValuesToResponse(productRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Product with ID " + id + " not found")));
+        Brand brand = brandRepository.findById(dto.brandId())
+                .orElseThrow(() -> new EntityNotFoundException("Brand not found"));
 
+        SubCategory subCategory = subCategoryRepository.findById(dto.subCategoryId())
+                .orElseThrow(() -> new EntityNotFoundException("SubCategory not found"));
+
+        Product product = new Product();
+        product.setProductName(dto.productName());
+        product.setProductType(dto.productType());
+        product.setProductDescription(dto.productDescription());
+        product.setBrand(brand);
+        product.setUnitOfMeasure(dto.unitOfMeasure());
+        product.setQuantity(dto.quantity());
+        product.setPricePerUnit(dto.pricePerUnit());
+        product.setSubCategory(subCategory);
+        product.setExpiryDate(dto.expiryDate());
+
+        return productToProductResponse(productRepository.save(product));
     }
 
     @Override
-    public List<ProductResponse> getProductList() {
-        return productRepository.findAll().stream().map(this::copyValuesToResponse).toList();
+    public ProductResponseDTO update(ProductUpdateDTO dto) {
+        Product existing = productRepository.findById(dto.id())
+                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+
+        if (dto.productName() != null && dto.brandId() != null
+                && productRepository.existsByProductNameAndBrandIdAndIdNot(dto.productName(), dto.brandId(), dto.id())) {
+            throw new DuplicateValuesException("Product with this name already exists for the brand");
+        }
+
+        Brand brand = dto.brandId() != null ? brandRepository.findById(dto.brandId())
+                .orElseThrow(() -> new EntityNotFoundException("Brand not found")) : existing.getBrand();
+
+        SubCategory subCategory = dto.subCategoryId() != null ? subCategoryRepository.findById(dto.subCategoryId())
+                .orElseThrow(() -> new EntityNotFoundException("SubCategory not found")) : existing.getSubCategory();
+
+        existing.setProductName(dto.productName() != null ? dto.productName() : existing.getProductName());
+        existing.setProductType(dto.productType() != null ? dto.productType() : existing.getProductType());
+        existing.setProductDescription(dto.productDescription() != null ? dto.productDescription() : existing.getProductDescription());
+        existing.setBrand(brand);
+        existing.setUnitOfMeasure(dto.unitOfMeasure() != null ? dto.unitOfMeasure() : existing.getUnitOfMeasure());
+        existing.setQuantity(dto.quantity() != null ? dto.quantity() : existing.getQuantity());
+        existing.setPricePerUnit(dto.pricePerUnit() != null ? dto.pricePerUnit() : existing.getPricePerUnit());
+        existing.setSubCategory(subCategory);
+        existing.setExpiryDate(dto.expiryDate() != null ? dto.expiryDate() : existing.getExpiryDate());
+
+        return productToProductResponse(productRepository.save(existing));
     }
 
     @Override
-    public void saveProduct(ProductRequest productRequest) {
-           try {
-               Product product = new Product();
-               BeanUtils.copyProperties(productRequest, product);
-
-               SubCategory subCategory = subCategoryRepository.getReferenceById(productRequest.getSubCategory_id());
-               product.setSubCategory(subCategory);
-               Brand brand = new Brand();
-               brand.setId(1L);
-               product.setBrand(brand);
-               productRepository.save(product);
-               //kafkaTemplate.send("product-topic",productRequest);
-           } catch (RuntimeException e) {
-               throw new RuntimeException(e);
-           }
-
+    public ProductResponseDTO getById(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+        return productToProductResponse(product);
     }
 
-    public ProductResponse copyValuesToResponse(Product product){
-        ProductResponse productResponse = new ProductResponse();
-        BeanUtils.copyProperties(product,productResponse);
+    @Override
+    public List<ProductResponseDTO> getAll(Pageable pageable, ApiPaginatedContentResponse.Pagination pagination) {
+        Page<Product> products = productRepository.findAll(pageable);
+        pagination.setTotalPages(products.getTotalPages());
+        pagination.setTotalRecords(products.getTotalElements());
 
-        SubcategoryResponse subcategoryResponse = SubcategoryResponse.builder().build();
-        MainCategoryResponse mainCategoryResponse = MainCategoryResponse.builder().build();
+        return products.get().map(this::productToProductResponse).toList();
+    }
 
-        BeanUtils.copyProperties(product.getSubCategory().getMainCategory(),mainCategoryResponse);
-        BeanUtils.copyProperties(product.getSubCategory(),subcategoryResponse);
-        subcategoryResponse.setMainCategoryResponse(mainCategoryResponse);
-        productResponse.setSubCategoryResponse(subcategoryResponse);
+    @Override
+    public void delete(Long id) {
+        Product existing = productRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+        productRepository.delete(existing);
+    }
 
-        return productResponse;
+    private ProductResponseDTO productToProductResponse(Product product) {
+        return new ProductResponseDTO(
+                product.getId(),
+                product.getProductName(),
+                product.getProductType(),
+                product.getProductDescription(),
+                product.getBrand().getId(),
+                product.getUnitOfMeasure(),
+                product.getQuantity(),
+                product.getPricePerUnit(),
+                product.getSubCategory().getId(),
+                product.getCreated_timestamp(),
+                product.getUpdated_timestamp(),
+                product.getExpiryDate()
+        );
     }
 }
