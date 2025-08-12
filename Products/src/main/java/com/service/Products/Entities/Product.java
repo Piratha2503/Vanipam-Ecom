@@ -12,6 +12,7 @@ import java.time.LocalDate;
 @Setter
 @Entity
 public class Product extends DateTimeUtils {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,27 +20,25 @@ public class Product extends DateTimeUtils {
     @Column(nullable = false)
     private String productName;
 
-    private String productType;
-
-    private String productDescription;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "brand_id")
-    private Brand brand;
-
     @Column(name = "unit_of_measure")
     private String unitOfMeasure;
 
-    private Long quantity;
+    @Column(name = "expiry_date")
+    private LocalDate expiryDate;
 
-    @Column(name = "price_per_unit", nullable = false)
-    private BigDecimal pricePerUnit;
+    @Column(name = "description")
+    private String productDescription;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "product_type_id")
+    private ProductType productType;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "sub_category_id")
     private SubCategory subCategory;
 
-    @Column(name = "expiry_date")
-    private LocalDate expiryDate;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "brand_id")
+    private Brand brand;
 
 }

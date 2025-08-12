@@ -12,8 +12,8 @@ public record ProductSaveDTO(
         @NotBlank(message = "Product name is required")
         String productName,
 
-        @NotBlank(message = "Product type is required")
-        String productType,
+        @NotNull(message = "Product type is required")
+        ProductTypeRequest productType,
 
         @Size(max = 500, message = "Product description must be less than 500 characters")
         String productDescription,

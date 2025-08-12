@@ -1,7 +1,6 @@
 package com.service.Products.Resolvers;
 
 import com.service.Products.APIResponse.ApiBaseResponses;
-import com.service.Products.DTO.RequestDTO.ProductRequest;
 import com.service.Products.DTO.ResponseDTO.ProductResponseDTO;
 import com.service.Products.Service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,15 +25,5 @@ public class ProductResolver {
     public ProductResponseDTO getProductById(@Argument Long id){
         System.out.println(id);
         return productService.getById(id);
-    }
-
-    @QueryMapping
-    public ApiBaseResponses saveProduct(@Argument ProductRequest productRequest){
-
-        System.out.println(productRequest);
-        return new ApiBaseResponses(
-                "40000",
-                "Success",
-                "Product saved successfully");
     }
 }

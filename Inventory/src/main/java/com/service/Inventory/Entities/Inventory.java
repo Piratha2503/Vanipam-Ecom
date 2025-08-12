@@ -5,6 +5,7 @@ import com.service.Inventory.Utils.DateTimeUtils;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,20 +21,17 @@ public class Inventory extends DateTimeUtils {
     private Long id;
 
     @Column(nullable = false)
-    private String name;
-
-    private String description;
-
-    @Column(nullable = false)
     private Integer quantity;
 
-    @Column(nullable = false)
-    private Double price;
+    @Column(name = "price_per_unit", nullable = false)
+    private BigDecimal pricePerUnit;
 
+    @Column(nullable = false)
     private Long sellerId;
+
+    @Column(nullable = false)
+    private Long productId;
 
     @Enumerated(EnumType.STRING)
     private InventoryStatus status;
-
-    private LocalDateTime createdAt;
 }

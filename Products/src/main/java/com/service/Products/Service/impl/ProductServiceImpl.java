@@ -3,9 +3,13 @@ package com.service.Products.Service.impl;
 import com.service.Products.APIResponse.ApiPaginatedContentResponse;
 import com.service.Products.DTO.RequestDTO.ProductSaveDTO;
 import com.service.Products.DTO.RequestDTO.ProductUpdateDTO;
+import com.service.Products.DTO.ResponseDTO.BrandResponse;
 import com.service.Products.DTO.ResponseDTO.ProductResponseDTO;
+import com.service.Products.DTO.ResponseDTO.ProductTypeResponse;
+import com.service.Products.DTO.ResponseDTO.SubCategoryResponse;
 import com.service.Products.Entities.Brand;
 import com.service.Products.Entities.Product;
+import com.service.Products.Entities.ProductType;
 import com.service.Products.Entities.SubCategory;
 import com.service.Products.ExceptionHandle.CustomExceptions.DuplicateValuesException;
 import com.service.Products.Repositories.BrandRepository;
@@ -32,7 +36,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponseDTO create(ProductSaveDTO dto) {
-        // Example duplicate check: Product name unique within brand (customize as needed)
+
         if (productRepository.existsByProductNameAndBrandId(dto.productName(), dto.brandId()))
             throw new DuplicateValuesException("Product with this name already exists for the brand");
 
@@ -44,12 +48,11 @@ public class ProductServiceImpl implements ProductService {
 
         Product product = new Product();
         product.setProductName(dto.productName());
-        product.setProductType(dto.productType());
+        product.setProductType(ProductType.builder().id(product.getProductType().getId())
+                .name(product.getProductType().getName()).build());
         product.setProductDescription(dto.productDescription());
         product.setBrand(brand);
         product.setUnitOfMeasure(dto.unitOfMeasure());
-        product.setQuantity(dto.quantity());
-        product.setPricePerUnit(dto.pricePerUnit());
         product.setSubCategory(subCategory);
         product.setExpiryDate(dto.expiryDate());
 
@@ -73,12 +76,10 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new EntityNotFoundException("SubCategory not found")) : existing.getSubCategory();
 
         existing.setProductName(dto.productName() != null ? dto.productName() : existing.getProductName());
-        existing.setProductType(dto.productType() != null ? dto.productType() : existing.getProductType());
+        //existing.setProductType(dto.productType() != null ? dto.productType() : existing.getProductType());
         existing.setProductDescription(dto.productDescription() != null ? dto.productDescription() : existing.getProductDescription());
         existing.setBrand(brand);
         existing.setUnitOfMeasure(dto.unitOfMeasure() != null ? dto.unitOfMeasure() : existing.getUnitOfMeasure());
-        existing.setQuantity(dto.quantity() != null ? dto.quantity() : existing.getQuantity());
-        existing.setPricePerUnit(dto.pricePerUnit() != null ? dto.pricePerUnit() : existing.getPricePerUnit());
         existing.setSubCategory(subCategory);
         existing.setExpiryDate(dto.expiryDate() != null ? dto.expiryDate() : existing.getExpiryDate());
 
@@ -109,19 +110,30 @@ public class ProductServiceImpl implements ProductService {
     }
 
     private ProductResponseDTO productToProductResponse(Product product) {
+
+        ProductTypeResponse productType = new ProductTypeResponse(
+                product.getProductType().getId(),
+                product.getProductType().getName());
+
+        BrandResponse brand = BrandResponse.builder().id(product.getBrand().getId())
+                .brandName(product.getBrand().getBrandName()).build();
+
+        SubCategoryResponse subCategory = new SubCategoryResponse(
+                product.getSubCategory().getId(),
+                product.getSubCategory().getSubCategoryName(),
+                product.getSubCategory().getMainCategory().getId(),
+                product.getSubCategory().getMainCategory().getMainCategoryName());
+
         return new ProductResponseDTO(
                 product.getId(),
                 product.getProductName(),
-                product.getProductType(),
                 product.getProductDescription(),
-                product.getBrand().getId(),
                 product.getUnitOfMeasure(),
-                product.getQuantity(),
-                product.getPricePerUnit(),
-                product.getSubCategory().getId(),
+                product.getExpiryDate(),
                 product.getCreated_timestamp(),
                 product.getUpdated_timestamp(),
-                product.getExpiryDate()
-        );
+                productType,
+                brand,
+                subCategory);
     }
 }
