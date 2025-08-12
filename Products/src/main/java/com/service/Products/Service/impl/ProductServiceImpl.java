@@ -14,6 +14,7 @@ import com.service.Products.Entities.SubCategory;
 import com.service.Products.ExceptionHandle.CustomExceptions.DuplicateValuesException;
 import com.service.Products.Repositories.BrandRepository;
 import com.service.Products.Repositories.ProductRepository;
+import com.service.Products.Repositories.ProductTypeRepository;
 import com.service.Products.Repositories.SubCategoryRepository;
 import com.service.Products.Service.ProductService;
 import com.service.Products.Utils.ValidationCodesAndMessages;
@@ -32,13 +33,23 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final BrandRepository brandRepository;
     private final SubCategoryRepository subCategoryRepository;
-    private final ValidationCodesAndMessages validationMessages;
+    private final ProductTypeRepository productTypeRepository;
+    private final ValidationCodesAndMessages validations;
 
     @Override
     public ProductResponseDTO create(ProductSaveDTO dto) {
 
-        if (productRepository.existsByProductNameAndBrandId(dto.productName(), dto.brandId()))
-            throw new DuplicateValuesException("Product with this name already exists for the brand");
+        // Condition 1: Brand + Product Name in same SubCategory should not repeat
+        if (productRepository.existsByProductNameAndBrandIdAndSubCategoryId(
+                dto.productName(), dto.brandId(), dto.subCategoryId())) {
+            throw new DuplicateValuesException("Product with this name already exists for the brand in this subcategory");
+        }
+
+        // Condition 2: Brand + Product Type + Product Name should be unique
+        if (productRepository.existsByProductNameAndBrandIdAndIdNot(
+                dto.productName(), dto.brandId(), dto.productType().id())) {
+            throw new DuplicateValuesException("Product with this type already exists for the brand");
+        }
 
         Brand brand = brandRepository.findById(dto.brandId())
                 .orElseThrow(() -> new EntityNotFoundException("Brand not found"));
@@ -46,10 +57,12 @@ public class ProductServiceImpl implements ProductService {
         SubCategory subCategory = subCategoryRepository.findById(dto.subCategoryId())
                 .orElseThrow(() -> new EntityNotFoundException("SubCategory not found"));
 
+        ProductType productType = productTypeRepository.findById(dto.productType().id())
+                .orElseThrow(() -> new EntityNotFoundException("Product Type not found"));
+
         Product product = new Product();
         product.setProductName(dto.productName());
-        product.setProductType(ProductType.builder().id(product.getProductType().getId())
-                .name(product.getProductType().getName()).build());
+        product.setProductType(productType);
         product.setProductDescription(dto.productDescription());
         product.setBrand(brand);
         product.setUnitOfMeasure(dto.unitOfMeasure());
@@ -59,24 +72,47 @@ public class ProductServiceImpl implements ProductService {
         return productToProductResponse(productRepository.save(product));
     }
 
+
     @Override
     public ProductResponseDTO update(ProductUpdateDTO dto) {
         Product existing = productRepository.findById(dto.id())
                 .orElseThrow(() -> new EntityNotFoundException("Product not found"));
 
-        if (dto.productName() != null && dto.brandId() != null
-                && productRepository.existsByProductNameAndBrandIdAndIdNot(dto.productName(), dto.brandId(), dto.id())) {
-            throw new DuplicateValuesException("Product with this name already exists for the brand");
+        Long brandId = dto.brandId() != null ? dto.brandId() : existing.getBrand().getId();
+        Long subCategoryId = dto.subCategoryId() != null ? dto.subCategoryId() : existing.getSubCategory().getId();
+        Long productTypeId = dto.productType() != null ? dto.productType().id() : existing.getProductType().getId();
+        String productName = dto.productName() != null ? dto.productName() : existing.getProductName();
+
+        Brand brand = dto.brandId() != null
+                ? brandRepository.findById(dto.brandId())
+                .orElseThrow(() -> new EntityNotFoundException("Brand not found"))
+                : existing.getBrand();
+
+        SubCategory subCategory = dto.subCategoryId() != null
+                ? subCategoryRepository.findById(dto.subCategoryId())
+                .orElseThrow(() -> new EntityNotFoundException("SubCategory not found"))
+                : existing.getSubCategory();
+
+        ProductType productType = dto.productType().id() != null
+                ? productTypeRepository.findById(dto.productType().id())
+                .orElseThrow(() -> new EntityNotFoundException("Product Type not found"))
+                : existing.getProductType();
+
+
+        if (productRepository.existsByProductNameAndBrandIdAndSubCategoryIdAndIdNot(
+                productName, brandId, subCategoryId, dto.id())) {
+            throw new DuplicateValuesException("Product with this name already exists for the brand in this subcategory");
         }
 
-        Brand brand = dto.brandId() != null ? brandRepository.findById(dto.brandId())
-                .orElseThrow(() -> new EntityNotFoundException("Brand not found")) : existing.getBrand();
 
-        SubCategory subCategory = dto.subCategoryId() != null ? subCategoryRepository.findById(dto.subCategoryId())
-                .orElseThrow(() -> new EntityNotFoundException("SubCategory not found")) : existing.getSubCategory();
+        if (productRepository.existsByProductNameAndBrandIdAndProductTypeIdAndIdNot(
+                productName, brandId, productTypeId, dto.id())) {
+            throw new DuplicateValuesException("Product with this type already exists for the brand");
+        }
 
-        existing.setProductName(dto.productName() != null ? dto.productName() : existing.getProductName());
-        //existing.setProductType(dto.productType() != null ? dto.productType() : existing.getProductType());
+
+        existing.setProductName(productName);
+        existing.setProductType(productType);
         existing.setProductDescription(dto.productDescription() != null ? dto.productDescription() : existing.getProductDescription());
         existing.setBrand(brand);
         existing.setUnitOfMeasure(dto.unitOfMeasure() != null ? dto.unitOfMeasure() : existing.getUnitOfMeasure());
@@ -85,6 +121,7 @@ public class ProductServiceImpl implements ProductService {
 
         return productToProductResponse(productRepository.save(existing));
     }
+
 
     @Override
     public ProductResponseDTO getById(Long id) {

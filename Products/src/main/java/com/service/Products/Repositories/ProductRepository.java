@@ -18,4 +18,11 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             "JOIN FETCH p.subCategory " +
             "JOIN FETCH p.brand ")
     Page<Product> findAllProducts(Pageable pageable);
+
+    boolean existsByProductNameAndBrandIdAndSubCategoryId(@NotBlank(message = "Product name is required") String s, @NotNull(message = "Brand ID is required") Long aLong, @NotNull(message = "Subcategory ID is required") Long aLong1);
+
+    boolean existsByProductNameAndBrandIdAndSubCategoryIdAndIdNot(String productName, Long brandId, Long subCategoryId, Long id);
+
+    boolean existsByProductNameAndBrandIdAndProductTypeIdAndIdNot(String productName, Long brandId, Long productTypeId, Long id);
+
 }
