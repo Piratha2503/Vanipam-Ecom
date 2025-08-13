@@ -2,6 +2,7 @@ package com.service.Products.Entities;
 
 import com.service.Products.Utils.DateTimeUtils;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@Builder
 public class Brand extends DateTimeUtils {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

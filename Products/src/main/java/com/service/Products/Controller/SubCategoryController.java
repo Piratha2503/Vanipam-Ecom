@@ -85,8 +85,7 @@ public class SubCategoryController {
     }
 
     @PostMapping(subCategory)
-    public ResponseEntity<APIContentResponse<SubCategoryResponse>> createSubCategory(
-            @Valid @RequestBody SubCategoryRequest dto) {
+    public ResponseEntity<APIContentResponse<SubCategoryResponse>> createSubCategory(@Valid @RequestBody SubCategoryRequest dto) {
 
         log.info(logs.getCreatingSubCategoryLog(), dto);
 

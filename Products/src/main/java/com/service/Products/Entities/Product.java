@@ -29,7 +29,7 @@ public class Product extends DateTimeUtils {
     @Column(name = "description")
     private String productDescription;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false,cascade = CascadeType.ALL)
     @JoinColumn(name = "product_type_id")
     private ProductType productType;
 
@@ -37,7 +37,7 @@ public class Product extends DateTimeUtils {
     @JoinColumn(name = "sub_category_id")
     private SubCategory subCategory;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false,cascade = CascadeType.ALL)
     @JoinColumn(name = "brand_id")
     private Brand brand;
 

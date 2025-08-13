@@ -23,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -41,24 +40,22 @@ public class ProductServiceImpl implements ProductService {
 
         // Condition 1: Brand + Product Name in same SubCategory should not repeat
         if (productRepository.existsByProductNameAndBrandIdAndSubCategoryId(
-                dto.productName(), dto.brandId(), dto.subCategoryId())) {
+                dto.productName(), dto.brand().getId(), dto.subCategoryId())) {
             throw new DuplicateValuesException("Product with this name already exists for the brand in this subcategory");
         }
 
         // Condition 2: Brand + Product Type + Product Name should be unique
         if (productRepository.existsByProductNameAndBrandIdAndIdNot(
-                dto.productName(), dto.brandId(), dto.productType().id())) {
+                dto.productName(), dto.brand().getId(), dto.productType().id())) {
             throw new DuplicateValuesException("Product with this type already exists for the brand");
         }
 
-        Brand brand = brandRepository.findById(dto.brandId())
-                .orElseThrow(() -> new EntityNotFoundException("Brand not found"));
+        Brand brand = brandRepository.findByBrandName(dto.brand().getBrandName()).orElse(Brand.builder().brandName(dto.brand().getBrandName()).build());
 
         SubCategory subCategory = subCategoryRepository.findById(dto.subCategoryId())
                 .orElseThrow(() -> new EntityNotFoundException("SubCategory not found"));
 
-        ProductType productType = productTypeRepository.findById(dto.productType().id())
-                .orElseThrow(() -> new EntityNotFoundException("Product Type not found"));
+        ProductType productType = productTypeRepository.findByName(dto.productType().name()).orElse(ProductType.builder().name(dto.productType().name()).build());
 
         Product product = new Product();
         product.setProductName(dto.productName());
@@ -72,11 +69,10 @@ public class ProductServiceImpl implements ProductService {
         return productToProductResponse(productRepository.save(product));
     }
 
-
     @Override
     public ProductResponseDTO update(ProductUpdateDTO dto) {
         Product existing = productRepository.findById(dto.id())
-                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+                .orElseThrow(() -> new EntityNotFoundException(validations.getProductEntityNotFoundMessage()));
 
         Long brandId = dto.brandId() != null ? dto.brandId() : existing.getBrand().getId();
         Long subCategoryId = dto.subCategoryId() != null ? dto.subCategoryId() : existing.getSubCategory().getId();
@@ -90,9 +86,10 @@ public class ProductServiceImpl implements ProductService {
 
         SubCategory subCategory = dto.subCategoryId() != null
                 ? subCategoryRepository.findById(dto.subCategoryId())
-                .orElseThrow(() -> new EntityNotFoundException("SubCategory not found"))
+                .orElseThrow(() -> new EntityNotFoundException(validations.getSubCategoryEntityNotFoundMessage()))
                 : existing.getSubCategory();
 
+        assert dto.productType() != null;
         ProductType productType = dto.productType().id() != null
                 ? productTypeRepository.findById(dto.productType().id())
                 .orElseThrow(() -> new EntityNotFoundException("Product Type not found"))
@@ -126,7 +123,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductResponseDTO getById(Long id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+                .orElseThrow(() -> new EntityNotFoundException(validations.getProductEntityNotFoundMessage()));
         return productToProductResponse(product);
     }
 
@@ -142,7 +139,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void delete(Long id) {
         Product existing = productRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+                .orElseThrow(() -> new EntityNotFoundException(validations.getProductEntityNotFoundMessage()));
         productRepository.delete(existing);
     }
 

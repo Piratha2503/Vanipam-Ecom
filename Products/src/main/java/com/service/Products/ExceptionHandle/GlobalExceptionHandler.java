@@ -6,6 +6,7 @@ import com.service.Products.ExceptionHandle.CustomExceptions.DuplicateValuesExce
 import com.service.Products.Utils.ValidationCodesAndMessages;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.TransientPropertyValueException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -31,7 +32,7 @@ public class GlobalExceptionHandler {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach(error -> {
             String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
+            String errorMessage = ((FieldError) error).getField();
             errors.put(fieldName, errorMessage);
         });
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
@@ -71,6 +72,17 @@ public class GlobalExceptionHandler {
         String code = validations.getAlreadyExistCode();
         String status = ResponseStatus.ERROR.getStatus();
         String msg = ie.getMessage();
+
+        return ResponseEntity.ok(new ApiBaseResponses(code,status,msg));
+    }
+
+    @ExceptionHandler(TransientPropertyValueException.class)
+    public ResponseEntity<Object> handleTransientPropertyValueException(TransientPropertyValueException tve){
+        tve.printStackTrace();
+
+        String code = validations.getCommonFailureCode();
+        String status = ResponseStatus.FAILURE.getStatus();
+        String msg = tve.getMessage();
 
         return ResponseEntity.ok(new ApiBaseResponses(code,status,msg));
     }

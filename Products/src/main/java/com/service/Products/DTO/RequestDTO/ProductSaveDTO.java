@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public record ProductSaveDTO(
         @NotBlank(message = "Product name is required")
@@ -18,8 +17,8 @@ public record ProductSaveDTO(
         @Size(max = 500, message = "Product description must be less than 500 characters")
         String productDescription,
 
-        @NotNull(message = "Brand ID is required")
-        Long brandId,
+        @NotNull(message = "Brand is required")
+        BrandRequest brand,
 
         @NotBlank(message = "Unit of measure is required")
         String unitOfMeasure,
