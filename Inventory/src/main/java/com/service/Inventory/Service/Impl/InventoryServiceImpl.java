@@ -23,12 +23,8 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public InventoryResponseDTO create(InventoryRequestDTO dto) {
         Inventory inv = Inventory.builder()
-                .name(dto.name())
-                .description(dto.description())
                 .quantity(dto.quantity())
-                .price(dto.price())
                 .status(dto.status())
-                .createdAt(LocalDateTime.now())
                 .build();
         return toDTO(repository.save(inv));
     }
@@ -46,10 +42,10 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public InventoryResponseDTO update(Long id, InventoryRequestDTO dto) {
         Inventory inv = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Inventory "+id +" Not found"));
-        inv.setName(dto.name());
-        inv.setDescription(dto.description());
+        inv.setProductId(dto.productId());
+        inv.setSellerId(dto.sellerId());
+        inv.setPricePerUnit(dto.pricePerUnit());
         inv.setQuantity(dto.quantity());
-        inv.setPrice(dto.price());
         inv.setStatus(dto.status());
         return toDTO(repository.save(inv));
     }
@@ -61,9 +57,11 @@ public class InventoryServiceImpl implements InventoryService {
 
     private InventoryResponseDTO toDTO(Inventory inv) {
         return new InventoryResponseDTO(
-                inv.getId(), inv.getName(), inv.getDescription(),
-                inv.getQuantity(), inv.getPrice(),
-                inv.getStatus(), inv.getCreatedAt()
+                inv.getQuantity(),
+                inv.getPricePerUnit(),
+                inv.getSellerId(),
+                inv.getProductId(),
+                inv.getStatus()
         );
     }
 }

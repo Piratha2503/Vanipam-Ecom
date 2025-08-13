@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class Inventory extends DateTimeUtils {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

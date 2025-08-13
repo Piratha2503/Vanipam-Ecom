@@ -4,21 +4,17 @@ import com.service.Inventory.APIResponse.APIContentResponse;
 import com.service.Inventory.APIResponse.ApiBaseResponses;
 import com.service.Inventory.DTO.RequestDTO.InventoryRequestDTO;
 import com.service.Inventory.DTO.ResponseDTO.InventoryResponseDTO;
-import com.service.Inventory.Enums.ApiResponseStatus;
 import com.service.Inventory.Service.InventoryService;
 import com.service.Inventory.Utils.APIEndPoints;
 import com.service.Inventory.Utils.ValidationCodesAndMessages;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.Locale;
-
 import static com.service.Inventory.Utils.APIEndPoints.*;
 
 @RestController
@@ -37,8 +33,8 @@ public class InventoryController {
         InventoryResponseDTO inventoryResponse = service.getById(id);
         return ResponseEntity.ok(
                 new APIContentResponse<>(
-                        ApiResponseStatus.SUCCESS.getStatus(),
                         validations.getCommonSuccessCode(),
+                        ApiResponseStatus.SUCCESS.getStatus(),
                         validations.getGetInventorySuccessMessage(),
                         inventory,
                         inventoryResponse)
@@ -50,8 +46,8 @@ public class InventoryController {
         List<InventoryResponseDTO> inventoryResponseList = service.getAll();
         return ResponseEntity.ok(
                 new APIContentResponse<>(
-                        ApiResponseStatus.SUCCESS.getStatus(),
                         validations.getCommonSuccessCode(),
+                        ApiResponseStatus.SUCCESS.getStatus(),
                         validations.getGetInventorySuccessMessage(),
                         inventories,
                         inventoryResponseList)
@@ -65,8 +61,8 @@ public class InventoryController {
         InventoryResponseDTO saved = service.create(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 new APIContentResponse<>(
-                        ApiResponseStatus.SUCCESS.getStatus(),
                         validations.getCommonSuccessCode(),
+                        ApiResponseStatus.SUCCESS.getStatus(),
                         validations.getSaveInventorySuccessMessage(),
                         inventory,
                         saved)
@@ -80,8 +76,8 @@ public class InventoryController {
         InventoryResponseDTO updated = service.update(id, dto);
         return ResponseEntity.ok(
                 new APIContentResponse<>(
-                        ApiResponseStatus.SUCCESS.getStatus(),
                         validations.getCommonSuccessCode(),
+                        ApiResponseStatus.SUCCESS.getStatus(),
                         validations.getUpdateInventorySuccessMessage(),
                         inventory,
                         updated)
@@ -94,8 +90,8 @@ public class InventoryController {
         service.delete(id);
         return ResponseEntity.ok(
                 new ApiBaseResponses(
-                        ApiResponseStatus.SUCCESS.getStatus(),
                         validations.getCommonSuccessCode(),
+                        ApiResponseStatus.SUCCESS.getStatus(),
                         validations.getDeleteInventorySuccessMessage())
         );
     }

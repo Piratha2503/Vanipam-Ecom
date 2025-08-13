@@ -5,20 +5,16 @@ import lombok.Getter;
 import java.util.Arrays;
 
 @Getter
-public enum ApiResponseStatus {
-    SUCCESS("Success"),
-    FAILURE("Failure"),
-    UNKNOWN("Unknown"),
-    ERROR("Error"),
-    WARNING("Warning");
-
+public enum ResponseStatus {
+    SUCCESS("success"), FAILURE("failure"), UNKNOWN("unknown"), ERROR("error"), WARNING("warning"),
+    DUPLICATE("duplicate");
     private final String status;
 
-    ApiResponseStatus(String status) {
+    ResponseStatus(String status) {
         this.status = status;
     }
 
-    public static ApiResponseStatus getByStatus(String status) {
+    public static ResponseStatus getByStatus(String status) {
         return Arrays.stream(values())
                 .filter(responseStatus -> responseStatus.getStatus().equals(status))
                 .findFirst()

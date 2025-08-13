@@ -14,10 +14,14 @@ public class ValidationCodesAndMessages {
     private String commonSuccessCode;
     @Value("${code.failure.common}")
     private String commonFailureCode;
+    @Value("${code.null.entity.common}")
+    private String commonEntityNotFoundCode;
     @Value("${code.nullValues.received}")
     private String NullValuesCode;
     @Value("${code.failure.file}")
     private String fileFailureCode;
+    @Value("${code.already.exist}")
+    private String alreadyExistCode;
 
     // Inventory messages
     @Value("${message.success.save.inventory}")
