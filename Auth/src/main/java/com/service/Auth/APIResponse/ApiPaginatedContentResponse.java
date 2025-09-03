@@ -1,5 +1,7 @@
 package com.service.Auth.APIResponse;
 
+import lombok.*;
+
 import java.util.HashMap;
 import java.util.Map;
 

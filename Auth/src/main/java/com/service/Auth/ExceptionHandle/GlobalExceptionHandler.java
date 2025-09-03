@@ -1,9 +1,9 @@
 package com.service.Auth.ExceptionHandle;
 
-import com.service.Users.APIResponse.ApiBaseResponses;
-import com.service.Users.Enums.ResponseStatus;
-import com.service.Users.ExceptionHandle.CustomExceptions.DuplicateValuesException;
-import com.service.Users.Utils.ValidationCodesAndMessages;
+import com.service.Auth.APIResponse.ApiBaseResponses;
+import com.service.Auth.Enums.ResponseStatus;
+import com.service.Auth.ExceptionHandle.CustomExceptions.DuplicateValuesException;
+import com.service.Auth.Utils.ValidationCodesAndMessages;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
