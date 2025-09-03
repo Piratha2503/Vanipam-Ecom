@@ -1,10 +1,7 @@
-package com.service.Users.Entities;
+package com.service.Auth.Entities;
 
 import com.service.Users.Utils.DateTimeUtils;
 import jakarta.persistence.*;
-import lombok.*;
-
-import java.util.List;
 
 @Entity
 @Table(name = "seller")

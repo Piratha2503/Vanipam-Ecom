@@ -1,19 +1,18 @@
-package com.service.Inventory.ExceptionHandle;
+package com.service.Auth.ExceptionHandle;
 
-
-import com.service.Inventory.APIResponse.ApiBaseResponses;
-import com.service.Inventory.Enums.ResponseStatus;
-import com.service.Inventory.ExceptionHandle.CustomExceptions.DuplicateValuesException;
-import com.service.Inventory.Utils.ValidationCodesAndMessages;
+import com.service.Users.APIResponse.ApiBaseResponses;
+import com.service.Users.Enums.ResponseStatus;
+import com.service.Users.ExceptionHandle.CustomExceptions.DuplicateValuesException;
+import com.service.Users.Utils.ValidationCodesAndMessages;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.TransientPropertyValueException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,12 +25,13 @@ public class GlobalExceptionHandler {
 
     private final String unknownStatus = ResponseStatus.UNKNOWN.getStatus();
 
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationErrors(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach(error -> {
             String fieldName = ((FieldError) error).getField();
-            String errorMessage = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
@@ -71,17 +71,6 @@ public class GlobalExceptionHandler {
         String code = validations.getAlreadyExistCode();
         String status = ResponseStatus.ERROR.getStatus();
         String msg = ie.getMessage();
-
-        return ResponseEntity.ok(new ApiBaseResponses(code,status,msg));
-    }
-
-    @ExceptionHandler(TransientPropertyValueException.class)
-    public ResponseEntity<Object> handleTransientPropertyValueException(TransientPropertyValueException tve){
-        tve.printStackTrace();
-
-        String code = validations.getCommonFailureCode();
-        String status = ResponseStatus.FAILURE.getStatus();
-        String msg = tve.getMessage();
 
         return ResponseEntity.ok(new ApiBaseResponses(code,status,msg));
     }

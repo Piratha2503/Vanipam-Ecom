@@ -4,6 +4,8 @@ import com.service.Users.Utils.DateTimeUtils;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -22,6 +24,7 @@ public class Buyer extends DateTimeUtils {
 
     @Column(unique = true, nullable = false)
     private String mobile;
+
     @Embedded
     private Address address;
 

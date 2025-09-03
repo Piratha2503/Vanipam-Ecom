@@ -4,6 +4,7 @@ import com.service.Inventory.APIResponse.APIContentResponse;
 import com.service.Inventory.APIResponse.ApiBaseResponses;
 import com.service.Inventory.DTO.RequestDTO.InventoryRequestDTO;
 import com.service.Inventory.DTO.ResponseDTO.InventoryResponseDTO;
+import com.service.Inventory.Enums.ResponseStatus;
 import com.service.Inventory.Service.InventoryService;
 import com.service.Inventory.Utils.APIEndPoints;
 import com.service.Inventory.Utils.ValidationCodesAndMessages;
@@ -28,13 +29,15 @@ public class InventoryController {
     private final InventoryService service;
     private final ValidationCodesAndMessages validations;
 
+    String status = ResponseStatus.SUCCESS.getStatus();
+
     @GetMapping(inventoryById)
     public ResponseEntity<APIContentResponse<InventoryResponseDTO>> get(@PathVariable Long id) {
         InventoryResponseDTO inventoryResponse = service.getById(id);
         return ResponseEntity.ok(
                 new APIContentResponse<>(
                         validations.getCommonSuccessCode(),
-                        ApiResponseStatus.SUCCESS.getStatus(),
+                        status,
                         validations.getGetInventorySuccessMessage(),
                         inventory,
                         inventoryResponse)
@@ -47,7 +50,7 @@ public class InventoryController {
         return ResponseEntity.ok(
                 new APIContentResponse<>(
                         validations.getCommonSuccessCode(),
-                        ApiResponseStatus.SUCCESS.getStatus(),
+                        status,
                         validations.getGetInventorySuccessMessage(),
                         inventories,
                         inventoryResponseList)
@@ -62,7 +65,7 @@ public class InventoryController {
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 new APIContentResponse<>(
                         validations.getCommonSuccessCode(),
-                        ApiResponseStatus.SUCCESS.getStatus(),
+                        status,
                         validations.getSaveInventorySuccessMessage(),
                         inventory,
                         saved)
@@ -77,7 +80,7 @@ public class InventoryController {
         return ResponseEntity.ok(
                 new APIContentResponse<>(
                         validations.getCommonSuccessCode(),
-                        ApiResponseStatus.SUCCESS.getStatus(),
+                        status,
                         validations.getUpdateInventorySuccessMessage(),
                         inventory,
                         updated)
@@ -91,7 +94,7 @@ public class InventoryController {
         return ResponseEntity.ok(
                 new ApiBaseResponses(
                         validations.getCommonSuccessCode(),
-                        ApiResponseStatus.SUCCESS.getStatus(),
+                        status,
                         validations.getDeleteInventorySuccessMessage())
         );
     }
