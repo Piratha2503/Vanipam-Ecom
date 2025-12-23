@@ -88,7 +88,6 @@ public class BuyerServiceImpl implements BuyerService {
         Page<Buyer> buyers = buyerRepository.findAll(pageable);
         pagination.setTotalPages(buyers.getTotalPages());
         pagination.setTotalRecords(buyers.getTotalElements());
-
         return buyers.get().map(this::buyerToBuyerResponse).toList();
     }
 
@@ -98,20 +97,6 @@ public class BuyerServiceImpl implements BuyerService {
                 .orElseThrow(() -> new EntityNotFoundException(validationMessages.getBuyerEntityNotFoundMessage()));
 
         buyerRepository.delete(existing);
-    }
-
-    BuyerResponse buyerToBuyerResponse(Buyer buyer) {
-        return new BuyerResponse(
-                buyer.getId(),
-                buyer.getFirstname(),
-                buyer.getLastname(),
-                buyer.getEmail(),
-                buyer.getMobile(),
-                buyer.getAddress(),
-                buyer.getUsername(),
-                buyer.getCreated_timestamp(),
-                buyer.getUpdated_timestamp()
-        );
     }
 
     @Override
@@ -127,5 +112,19 @@ public class BuyerServiceImpl implements BuyerService {
     @Override
     public Boolean existsByUserName(String userName) {
         return null;
+    }
+
+    BuyerResponse buyerToBuyerResponse(Buyer buyer) {
+        return new BuyerResponse(
+                buyer.getId(),
+                buyer.getFirstname(),
+                buyer.getLastname(),
+                buyer.getEmail(),
+                buyer.getMobile(),
+                buyer.getAddress(),
+                buyer.getUsername(),
+                buyer.getCreated_timestamp(),
+                buyer.getUpdated_timestamp()
+        );
     }
 }

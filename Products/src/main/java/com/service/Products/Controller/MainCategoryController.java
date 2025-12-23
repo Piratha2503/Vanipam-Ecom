@@ -36,9 +36,11 @@ public class MainCategoryController {
     @GetMapping(mainCategoryById)
     public ResponseEntity<APIContentResponse<MainCategoryResponse>> getMainCategoryById(@PathVariable Long id) {
 
-        log.info(logs.getFetchingMainCategoryLog());
+        long t0 = System.currentTimeMillis();
+        log.info(logs.getFetchingMainCategoryLog(),id);
         MainCategoryResponse response = mainCategoryService.getById(id);
-        log.info(logs.getFetchedMainCategoryLog());
+        long t1 = System.currentTimeMillis() - t0;
+        log.info(logs.getFetchedMainCategoryLog(),id,t1);
 
         String code = validations.getCommonSuccessCode();
         String status = ResponseStatus.SUCCESS.getStatus();
@@ -54,6 +56,7 @@ public class MainCategoryController {
             @RequestParam(name = "direction", required = false) String direction,
             @RequestParam(name = "sortField", required = false) String sortField) {
 
+        long t0 = System.currentTimeMillis();
         log.info(logs.getFetchingMainCategoriesLog());
 
         int pageNo = page != null ? page : 0;
@@ -73,7 +76,8 @@ public class MainCategoryController {
 
         List<MainCategoryResponse> list = mainCategoryService.getAll(pageable, pagination);
 
-        log.info(logs.getFetchedMainCategoriesLog());
+        long t1 = System.currentTimeMillis() - t0;
+        log.info(logs.getFetchedMainCategoriesLog(),t1);
 
         String code = validations.getCommonSuccessCode();
         String status = ResponseStatus.SUCCESS.getStatus();
@@ -86,11 +90,13 @@ public class MainCategoryController {
     public ResponseEntity<APIContentResponse<MainCategoryResponse>> createMainCategory(
             @Valid @RequestBody MainCategoryRequest dto) {
 
-        log.info(logs.getCreatingMainCategoryLog(), dto);
+        long t0 = System.currentTimeMillis();
+        log.info(logs.getCreatingMainCategoryLog());
 
         MainCategoryResponse response = mainCategoryService.create(dto);
 
-        log.info(logs.getCreatedMainCategoryLog(), response);
+        long t1 = System.currentTimeMillis() - t0;
+        log.info(logs.getCreatedMainCategoryLog(), response.id(),t1);
 
         String code = validations.getCommonSuccessCode();
         String status = ResponseStatus.SUCCESS.getStatus();
@@ -103,11 +109,13 @@ public class MainCategoryController {
     public ResponseEntity<APIContentResponse<MainCategoryResponse>> updateMainCategory(
             @Valid @RequestBody MainCategoryRequest dto) {
 
+        long t0 = System.currentTimeMillis();
         log.info(logs.getUpdatingMainCategoryLog(), dto);
 
         MainCategoryResponse response = mainCategoryService.update(dto);
 
-        log.info(logs.getUpdatedMainCategoryLog(), response);
+        long t1 = System.currentTimeMillis() - t0;
+        log.info(logs.getUpdatedMainCategoryLog(), response.id(),t1);
 
         String code = validations.getCommonSuccessCode();
         String status = ResponseStatus.SUCCESS.getStatus();
@@ -119,11 +127,13 @@ public class MainCategoryController {
     @DeleteMapping(mainCategoryById)
     public ResponseEntity<ApiBaseResponses> deleteMainCategory(@PathVariable Long id) {
 
+        long t0 = System.currentTimeMillis();
         log.info(logs.getDeletingMainCategoryLog(), id);
 
         mainCategoryService.delete(id);
 
-        log.info(logs.getDeletedMainCategoryLog(), id);
+        long t1 = System.currentTimeMillis() - t0;
+        log.info(logs.getDeletedMainCategoryLog(), id, t1);
 
         String code = validations.getCommonSuccessCode();
         String status = ResponseStatus.SUCCESS.getStatus();

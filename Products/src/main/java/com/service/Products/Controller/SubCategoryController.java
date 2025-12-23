@@ -35,18 +35,29 @@ public class SubCategoryController {
     private final ValidationCodesAndMessages validations;
     private final SubCategoryLogs logs;
 
+    private static final String SUB_CATEGORY = "subCategory";
+    private static final String SUB_CATEGORIES = "subCategories";
+
     @GetMapping(subCategoryByID)
     public ResponseEntity<APIContentResponse<SubCategoryResponse>> getSubCategoryById(@PathVariable Long id) {
 
-        log.info(logs.getFetchingSubCategoryLog());
+        long t0 = System.currentTimeMillis();
+        log.info(logs.getFetchingSubCategoryLog(), id);
+
         SubCategoryResponse response = subCategoryService.getById(id);
-        log.info(logs.getFetchedSubCategoryLog());
 
-        String code = validations.getCommonSuccessCode();
-        String status = ResponseStatus.SUCCESS.getStatus();
-        String msg = validations.getGetSubCategorySuccessMessage();
+        long t1 = System.currentTimeMillis() - t0;
+        log.info(logs.getFetchedSubCategoryLog(), id, t1);
 
-        return ResponseEntity.ok(new APIContentResponse<>(code, status, msg, subCategory, response));
+        return ResponseEntity.ok(
+                new APIContentResponse<>(
+                        validations.getCommonSuccessCode(),
+                        ResponseStatus.SUCCESS.getStatus(),
+                        validations.getGetSubCategorySuccessMessage(),
+                        SUB_CATEGORY,
+                        response
+                )
+        );
     }
 
     @GetMapping(subCategories)
@@ -56,6 +67,7 @@ public class SubCategoryController {
             @RequestParam(name = "direction", required = false) String direction,
             @RequestParam(name = "sortField", required = false) String sortField) {
 
+        long t0 = System.currentTimeMillis();
         log.info(logs.getFetchingSubCategoriesLog());
 
         int pageNo = page != null ? page : 0;
@@ -66,70 +78,94 @@ public class SubCategoryController {
         String sortBy = (sortField != null) ? sortField : "id";
 
         Pageable pageable = PageRequest.of(pageNo, pageSize, sortDir, sortBy);
-        ApiPaginatedContentResponse.Pagination pagination = ApiPaginatedContentResponse.Pagination.builder()
-                .pageNumber(pageNo)
-                .pageSize(pageSize)
-                .totalPages(0)
-                .totalRecords(0L)
-                .build();
+        ApiPaginatedContentResponse.Pagination pagination =
+                ApiPaginatedContentResponse.Pagination.builder()
+                        .pageNumber(pageNo)
+                        .pageSize(pageSize)
+                        .totalPages(0)
+                        .totalRecords(0L)
+                        .build();
 
         List<SubCategoryResponse> list = subCategoryService.getAll(pageable, pagination);
 
-        log.info(logs.getFetchedSubCategoriesLog());
+        long t1 = System.currentTimeMillis() - t0;
+        log.info(logs.getFetchedSubCategoriesLog(), t1);
 
-        String code = validations.getCommonSuccessCode();
-        String status = ResponseStatus.SUCCESS.getStatus();
-        String msg = validations.getGetSubCategorySuccessMessage();
-
-        return ResponseEntity.ok(new ApiPaginatedContentResponse<>(code, status, msg, subCategories, list, pagination));
+        return ResponseEntity.ok(
+                new ApiPaginatedContentResponse<>(
+                        validations.getCommonSuccessCode(),
+                        ResponseStatus.SUCCESS.getStatus(),
+                        validations.getGetSubCategorySuccessMessage(),
+                        SUB_CATEGORIES,
+                        list,
+                        pagination
+                )
+        );
     }
 
     @PostMapping(subCategory)
-    public ResponseEntity<APIContentResponse<SubCategoryResponse>> createSubCategory(@Valid @RequestBody SubCategoryRequest dto) {
+    public ResponseEntity<APIContentResponse<SubCategoryResponse>> createSubCategory(
+            @Valid @RequestBody SubCategoryRequest dto) {
 
-        log.info(logs.getCreatingSubCategoryLog(), dto);
+        long t0 = System.currentTimeMillis();
+        log.info(logs.getCreatingSubCategoryLog());
 
         SubCategoryResponse response = subCategoryService.create(dto);
 
-        log.info(logs.getCreatedSubCategoryLog(), response);
+        long t1 = System.currentTimeMillis() - t0;
+        log.info(logs.getCreatedSubCategoryLog(), response.id(), t1);
 
-        String code = validations.getCommonSuccessCode();
-        String status = ResponseStatus.SUCCESS.getStatus();
-        String msg = validations.getSaveSubCategorySuccessMessage();
-
-        return ResponseEntity.ok(new APIContentResponse<>(code, status, msg, subCategory, response));
+        return ResponseEntity.ok(
+                new APIContentResponse<>(
+                        validations.getCommonSuccessCode(),
+                        ResponseStatus.SUCCESS.getStatus(),
+                        validations.getSaveSubCategorySuccessMessage(),
+                        SUB_CATEGORY,
+                        response
+                )
+        );
     }
 
     @PutMapping(subCategory)
     public ResponseEntity<APIContentResponse<SubCategoryResponse>> updateSubCategory(
             @Valid @RequestBody SubCategoryRequest dto) {
 
-        log.info(logs.getUpdatingSubCategoryLog(), dto);
+        long t0 = System.currentTimeMillis();
+        log.info(logs.getUpdatingSubCategoryLog(), dto.id());
 
         SubCategoryResponse response = subCategoryService.update(dto);
 
-        log.info(logs.getUpdatedSubCategoryLog(), response);
+        long t1 = System.currentTimeMillis() - t0;
+        log.info(logs.getUpdatedSubCategoryLog(), response.id(), t1);
 
-        String code = validations.getCommonSuccessCode();
-        String status = ResponseStatus.SUCCESS.getStatus();
-        String msg = validations.getUpdateSubCategorySuccessMessage();
-
-        return ResponseEntity.ok(new APIContentResponse<>(code, status, msg, subCategory, response));
+        return ResponseEntity.ok(
+                new APIContentResponse<>(
+                        validations.getCommonSuccessCode(),
+                        ResponseStatus.SUCCESS.getStatus(),
+                        validations.getUpdateSubCategorySuccessMessage(),
+                        SUB_CATEGORY,
+                        response
+                )
+        );
     }
 
     @DeleteMapping(subCategoryByID)
     public ResponseEntity<ApiBaseResponses> deleteSubCategory(@PathVariable Long id) {
 
+        long t0 = System.currentTimeMillis();
         log.info(logs.getDeletingSubCategoryLog(), id);
 
         subCategoryService.delete(id);
 
-        log.info(logs.getDeletedSubCategoryLog(), id);
+        long t1 = System.currentTimeMillis() - t0;
+        log.info(logs.getDeletedSubCategoryLog(), id, t1);
 
-        String code = validations.getCommonSuccessCode();
-        String status = ResponseStatus.SUCCESS.getStatus();
-        String msg = validations.getDeleteSubCategorySuccessMessage();
-
-        return ResponseEntity.ok(new ApiBaseResponses(code, status, msg));
+        return ResponseEntity.ok(
+                new ApiBaseResponses(
+                        validations.getCommonSuccessCode(),
+                        ResponseStatus.SUCCESS.getStatus(),
+                        validations.getDeleteSubCategorySuccessMessage()
+                )
+        );
     }
 }

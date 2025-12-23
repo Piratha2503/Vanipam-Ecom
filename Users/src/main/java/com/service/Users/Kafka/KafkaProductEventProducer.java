@@ -1,7 +1,7 @@
 package com.service.Users.Kafka;
 
-import com.service.Products.DTO.RequestDTO.ProductSaveDTO;
+import com.service.Users.DTO.RequestDTO.BuyerSaveDTO;
 
 public interface KafkaProductEventProducer {
-    void sendProductEvent(ProductSaveDTO productRequest);
+    void sendProductEvent(BuyerSaveDTO productRequest);
 }
